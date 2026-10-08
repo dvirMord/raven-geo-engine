@@ -1,0 +1,48 @@
+## --- Environment & Sensitive Files ---
+# Never commit environment configuration files containing sensitive data
+.env
+.env.*
+!.env.example
+
+## --- Build & Binaries ---
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+build/
+artifacts/
+
+## --- Visual Studio & IDEs ---
+.vs/
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+## --- User-specific files ---
+*.user
+*.userosscache
+*.suo
+*.userprefs
+*.rsuser
+*.sln.docstates
+
+## --- Temporary & Cache Files ---
+*.tmp
+*.log
+*.tlog
+*.cache
+*.vsidx
+*.suo
+
+## --- NuGet ---
+*.nupkg
+*.snupkg
+**/packages/*
+!**/packages/build/
+*.nuget.props
+*.nuget.targets

@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="raven-geo-engine/raven-geo-engine.vcxproj" Id="68a4aadc-4be8-44d1-8d21-28c43f5f4007" />
+</Solution>
