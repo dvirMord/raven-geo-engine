@@ -16,6 +16,5 @@ int main()
         return crow::response(200, res);
         });
 
-    // 3. הפעלת השרת
     app.port(18080).multithreaded().run();
 }
