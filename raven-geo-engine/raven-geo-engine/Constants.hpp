@@ -39,6 +39,7 @@ namespace Constants {
     namespace GeoCalculation {
         inline constexpr char LAT_PREFIX[] = "Calculated intersection for Lat: ";
         inline constexpr char LON_PREFIX[] = ", Lon: ";
+        inline constexpr char ALT_PREFIX[] = ", Alt: ";
     }
 
 } // namespace Constants
