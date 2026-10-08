@@ -1,6 +1,7 @@
 #include "crow.h"
-#include "GeoService.h"
-#include "GeoController.h"
+#include "GeoService.hpp"
+#include "GeoController.hpp"
+#include "Constants.hpp"
 
 int main()
 {
@@ -10,11 +11,11 @@ int main()
 
     GeoController geoController(app, geoService);
 
-    CROW_ROUTE(app, "/health")([]() {
+    CROW_ROUTE(app, Constants::Routes::HEALTH)([]() {
         crow::json::wvalue res;
-        res["Message"] = "Engine API is UP!";
-        return crow::response(200, res);
-        });
+        res[Constants::JsonKeys::MESSAGE] = Constants::Messages::ENGINE_UP;
+        return crow::response(Constants::StatusCodes::OK, res);
+    });
 
-    app.port(18080).multithreaded().run();
+    app.port(Constants::Server::DEFAULT_PORT).multithreaded().run();
 }

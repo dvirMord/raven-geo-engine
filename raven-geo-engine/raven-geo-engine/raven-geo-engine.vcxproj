@@ -146,8 +146,9 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GeoController.h" />
-    <ClInclude Include="GeoService.h" />
+    <ClInclude Include="Constants.hpp" />
+    <ClInclude Include="GeoController.hpp" />
+    <ClInclude Include="GeoService.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
