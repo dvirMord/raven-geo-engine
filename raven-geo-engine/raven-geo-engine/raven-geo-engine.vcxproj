@@ -113,6 +113,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>C:\Users\dvirm\vcpkg\installed\x64-windows\include;$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996;4244;4267</DisableSpecificWarnings>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -133,6 +134,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>C:\Users\dvirm\vcpkg\installed\x64-windows\include;$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996;4244;4267</DisableSpecificWarnings>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -144,13 +146,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="GeoController.cpp" />
-    <ClCompile Include="GeoService.cpp" />
+    <ClCompile Include="Network\TcpSocketReceiver.cpp" />
+    <ClCompile Include="Math\GeoCalculator.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Constants.hpp" />
-    <ClInclude Include="GeoController.hpp" />
-    <ClInclude Include="GeoService.hpp" />
+    <ClInclude Include="..\..\..\..\..\..\Downloads\json.hpp" />
+    <ClInclude Include="Common\Constants.hpp" />
+    <ClInclude Include="Models\TelemetryFrame.hpp" />
+    <ClInclude Include="Models\Ray.hpp" />
+    <ClInclude Include="Network\ITelemetryReceiver.hpp" />
+    <ClInclude Include="Network\TcpSocketReceiver.hpp" />
+    <ClInclude Include="Math\IGeoCalculator.hpp" />
+    <ClInclude Include="Math\GeoCalculator.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
