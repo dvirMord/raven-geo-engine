@@ -18,7 +18,7 @@ namespace Math
 
 	double GeoCalculator::toRadians(const double degrees)
 	{
-		return degrees * (pi / 180.0);
+		return degrees * (pi / Constants::Math::SEMICIRCLE_DEGREES);
 	}
 
     glm::dmat3 GeoCalculator::buildGimbalRotation(double panDeg, double tiltDeg)
@@ -26,15 +26,20 @@ namespace Math
         double pan = toRadians(panDeg);
         double tilt = toRadians(tiltDeg);
 
+        double cosTilt = std::cos(tilt);
+        double sinTilt = std::sin(tilt);
+        double cosPan = std::cos(pan);
+        double sinPan = std::sin(pan);
+
         glm::dmat3 Ry_tilt = glm::dmat3(
-            std::cos(tilt), 0.0, -std::sin(tilt),
+            cosTilt, 0.0, -sinTilt,
             0.0, 1.0, 0.0,
-            std::sin(tilt), 0.0, std::cos(tilt)
+            sinTilt, 0.0, cosTilt
         );
 
         glm::dmat3 Rz_pan = glm::dmat3(
-            std::cos(pan), std::sin(pan), 0.0,
-            -std::sin(pan), std::cos(pan), 0.0,
+            cosPan, sinPan, 0.0,
+            -sinPan, cosPan, 0.0,
             0.0, 0.0, 1.0
         );
 
@@ -47,21 +52,28 @@ namespace Math
         double pitch = toRadians(pitchDeg);
         double yaw = toRadians(yawDeg);
 
+        double cosRoll = std::cos(roll);
+        double sinRoll = std::sin(roll);
+        double cosPitch = std::cos(pitch);
+        double sinPitch = std::sin(pitch);
+        double cosYaw = std::cos(yaw);
+        double sinYaw = std::sin(yaw);
+
         glm::dmat3 Rx_roll = glm::dmat3(
             1.0, 0.0, 0.0,
-            0.0, std::cos(roll), std::sin(roll),
-            0.0, -std::sin(roll), std::cos(roll)
+            0.0, cosRoll, sinRoll,
+            0.0, -sinRoll, cosRoll
         );
 
         glm::dmat3 Ry_pitch = glm::dmat3(
-            std::cos(pitch), 0.0, -std::sin(pitch),
+            cosPitch, 0.0, -sinPitch,
             0.0, 1.0, 0.0,
-            std::sin(pitch), 0.0, std::cos(pitch)
+            sinPitch, 0.0, cosPitch
         );
 
         glm::dmat3 Rz_yaw = glm::dmat3(
-            std::cos(yaw), std::sin(yaw), 0.0,
-            -std::sin(yaw), std::cos(yaw), 0.0,
+            cosYaw, sinYaw, 0.0,
+            -sinYaw, cosYaw, 0.0,
             0.0, 0.0, 1.0
         );
 
@@ -82,7 +94,6 @@ namespace Math
         double uavRollDeg, double uavPitchDeg, double uavYawDeg,
         double gimbalPanDeg, double gimbalTiltDeg)
     {
-
         glm::dvec3 vCam(1.0, 0.0, 0.0);
 
         glm::dmat3 rTotal = calculateCameraToWorldMatrix(

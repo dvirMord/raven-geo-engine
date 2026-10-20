@@ -36,4 +36,9 @@ namespace Constants
         inline constexpr char GIMBAL_ELEVATION_DEG[] = "GimbalElevationDeg";
         inline constexpr char GIMBAL_ROLL_DEG[] = "GimbalRollDeg";
     }
+
+    namespace Math 
+    {
+        inline constexpr double SEMICIRCLE_DEGREES = 180.0;
+    }
 }
