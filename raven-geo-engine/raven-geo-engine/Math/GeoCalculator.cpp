@@ -10,8 +10,22 @@ namespace Math
 {
     Models::Ray GeoCalculator::calculateRay(const Models::TelemetryFrame& frame) 
     {
-        spdlog::info(Constants::Logs::CALC_RAY, frame.gimbalAzimuthDeg);
         Models::Ray ray;
+
+        ray.direction = this->calculateVWorld(
+            frame.platformRollDeg,
+            frame.platformPitchDeg,
+            frame.platformHeadingDeg,
+            frame.gimbalAzimuthDeg,
+            frame.gimbalElevationDeg
+        );
+
+        ray.origin = RavenMaths::Vector3D(
+            frame.sensorLatitude,
+            frame.sensorLongitude,
+            frame.sensorAltitudeMeters
+        );
+        spdlog::info(Constants::Logs::CALC_RAY, ray.origin.toString(), ray.direction.toString());
         return ray;
     }
 
