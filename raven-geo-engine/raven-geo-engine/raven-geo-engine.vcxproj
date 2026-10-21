@@ -152,6 +152,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\..\..\..\Downloads\json.hpp" />
     <ClInclude Include="Common\Constants.hpp" />
+    <ClInclude Include="Models\GroundIntersection.hpp" />
     <ClInclude Include="Models\TelemetryFrame.hpp" />
     <ClInclude Include="Models\Ray.hpp" />
     <ClInclude Include="Network\ITelemetryReceiver.hpp" />

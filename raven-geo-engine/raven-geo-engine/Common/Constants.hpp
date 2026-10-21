@@ -22,6 +22,12 @@ namespace Constants
         inline constexpr char PARSE_ERROR[] = "Failed to parse telemetry JSON: {}";
         inline constexpr char RUNNING_WAITING[] = "Running... Press ENTER to exit.";
         inline constexpr char CALC_RAY[] = "Created ray for GPS: {}, -->: {}";
+		inline constexpr char CALC_Z_POINT_WARNING[] = "The ray is pointing upwards / above the horizon (negative z direction): Ray: {}";
+		inline constexpr char DRONE_BELOW_GROUND_WARNING[] = "The drone is below the ground level. Drone altitude: {}, Ground altitude: {}";
+		inline constexpr char CALC_GROUND_INTERSECTION_ERROR[] = "Ground intersection point calculated, at: ({},{}). slant range: {} meters. the error is: {} meters";
+		inline constexpr char CALC_GROUND_INTERSECTION[] = "Ground intersection point calculated, at: ({},{}). slant range: {} meters";
+		inline constexpr char FRAME_CENTER_ELEVATION_MISSING[] = "No ground height, frame skipped.";  
+		inline constexpr char FRAME_CENTER_LATITUDE_AND_LONGITUDE_MISSING[] = "Frame center latitude and longitude are missing in the telemetry frame can't calculate the error.";
     }
 
     namespace TelemetryJsonKeys 
@@ -35,10 +41,14 @@ namespace Constants
         inline constexpr char GIMBAL_AZIMUTH_DEG[] = "GimbalAzimuthDeg";
         inline constexpr char GIMBAL_ELEVATION_DEG[] = "GimbalElevationDeg";
         inline constexpr char GIMBAL_ROLL_DEG[] = "GimbalRollDeg";
+		inline constexpr char FRAME_CENTER_LATITUDE[] = "FrameCenterLatitude"; 
+		inline constexpr char FRAME_CENTER_LONGITUDE[] = "FrameCenterLongitude";
+		inline constexpr char FRAME_CENTER_ELEVATION[] = "FrameCenterElevation";
     }
 
     namespace Math 
     {
         inline constexpr double SEMICIRCLE_DEGREES = 180.0;
+		inline constexpr double EARTH_RADIUS_M = 6371000.0;
     }
 }

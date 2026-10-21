@@ -1,4 +1,5 @@
 #pragma once
+#include <optional>
 
 namespace Models 
 {
@@ -13,6 +14,8 @@ namespace Models
         double gimbalAzimuthDeg = 0.0;
         double gimbalElevationDeg = 0.0;
         double gimbalRollDeg = 0.0;
+		std::optional<double> frameCenterLatitude = std::nullopt;
+		std::optional<double> frameCenterLongitude = std::nullopt;
+		std::optional<double> frameCenterElevation = std::nullopt;
     };
-
 } 

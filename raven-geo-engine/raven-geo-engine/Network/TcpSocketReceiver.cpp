@@ -129,6 +129,9 @@ namespace Network
 			frame.gimbalAzimuthDeg = j.value(Constants::TelemetryJsonKeys::GIMBAL_AZIMUTH_DEG, 0.0);
 			frame.gimbalElevationDeg = j.value(Constants::TelemetryJsonKeys::GIMBAL_ELEVATION_DEG, 0.0);
 			frame.gimbalRollDeg = j.value(Constants::TelemetryJsonKeys::GIMBAL_ROLL_DEG, 0.0);
+			frame.frameCenterLatitude = j.value(Constants::TelemetryJsonKeys::FRAME_CENTER_LATITUDE, std::optional<double>{});
+			frame.frameCenterLongitude = j.value(Constants::TelemetryJsonKeys::FRAME_CENTER_LONGITUDE, std::optional<double>{});
+			frame.frameCenterElevation = j.value(Constants::TelemetryJsonKeys::FRAME_CENTER_ELEVATION, std::optional<double>{});
 
 			callback(frame);
 		}
