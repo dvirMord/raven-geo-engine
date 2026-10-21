@@ -5,6 +5,8 @@
 #include "Vector3D.hpp"
 #include "Matrix3x3.hpp"
 #include <optional>
+#include <string>
+#include <vector>
 
 using RavenMaths::Matrix3x3;
 using RavenMaths::Vector3D;
@@ -16,6 +18,9 @@ namespace Math
     public:
         virtual ~IGeoCalculator() = default;
         virtual Models::Ray calculateRay(const Models::TelemetryFrame& frame) = 0;
+
+		// names of the ray inputs missing in the frame - empty when the ray can be calculated
+        virtual std::vector<std::string> findMissingRayFields(const Models::TelemetryFrame& frame) = 0;
         
 		//math functions
         virtual double toRadians(const double degrees) = 0;

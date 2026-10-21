@@ -29,6 +29,9 @@ namespace Math
         // calculate the ray from the telemetry frame
         Models::Ray calculateRay(const Models::TelemetryFrame& frame) override;
 
+		// names of the ray inputs missing in the frame - empty when the ray can be calculated
+        std::vector<std::string> findMissingRayFields(const Models::TelemetryFrame& frame) override;
+
 		// clac the ground intersection point from the ray and the ground plane
 		std::optional<Models::GroundIntersection> castRayToFlatGround(const Models::Ray& ray, double groundAltitudeMeters) override;
     };

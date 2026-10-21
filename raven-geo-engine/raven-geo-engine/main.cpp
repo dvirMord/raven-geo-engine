@@ -1,6 +1,7 @@
 #include <iostream>
 #include <memory>
 #include <spdlog/spdlog.h>
+#include <spdlog/fmt/ranges.h>
 #include "Common/Constants.hpp"
 #include "Network/TcpSocketReceiver.hpp"
 #include "Math/GeoCalculator.hpp"
@@ -15,6 +16,16 @@ int main()
     // Start background receiver with a simple callback
     receiver.start([&calculator](const Models::TelemetryFrame& frame) 
     {
+		spdlog::info(Constants::Logs::START_CALC);
+
+		// a missing ray input would silently become a wrong ray, so skip the frame
+        std::vector<std::string> missingFields = calculator->findMissingRayFields(frame);
+        if (!missingFields.empty())
+        {
+            spdlog::warn(Constants::Logs::RAY_FIELDS_MISSING, fmt::join(missingFields, ", "));
+            return;
+        }
+
 		// Calculate the ray from the telemetry frame
         Models::Ray ray = calculator->calculateRay(frame);
 
@@ -50,6 +61,7 @@ int main()
                 hitPoint->latitude, hitPoint->longitude, hitPoint->slantRangeMeters);
 			spdlog::warn(Constants::Logs::FRAME_CENTER_LATITUDE_AND_LONGITUDE_MISSING);
         }
+        spdlog::info(Constants::Logs::CALCULATION_COMPLETE);
     });
 
     spdlog::info(Constants::Logs::RUNNING_WAITING);

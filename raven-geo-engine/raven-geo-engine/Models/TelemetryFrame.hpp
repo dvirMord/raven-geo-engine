@@ -5,15 +5,15 @@ namespace Models
 {
     struct TelemetryFrame 
     {
-        double sensorLatitude = 0.0;
-        double sensorLongitude = 0.0;
-        double sensorAltitudeMeters = 0.0;
-        double platformHeadingDeg = 0.0;
-        double platformPitchDeg = 0.0;
-        double platformRollDeg = 0.0;
-        double gimbalAzimuthDeg = 0.0;
-        double gimbalElevationDeg = 0.0;
-        double gimbalRollDeg = 0.0;
+        // ray inputs - empty when missing in the telemetry, the frame is then skipped
+        std::optional<double> sensorLatitude = std::nullopt;
+        std::optional<double> sensorLongitude = std::nullopt;
+        std::optional<double> sensorAltitudeMeters = std::nullopt;
+        std::optional<double> platformHeadingDeg = std::nullopt;
+        std::optional<double> platformPitchDeg = std::nullopt;
+        std::optional<double> platformRollDeg = std::nullopt;
+        std::optional<double> gimbalAzimuthDeg = std::nullopt;
+        std::optional<double> gimbalElevationDeg = std::nullopt;
 		std::optional<double> frameCenterLatitude = std::nullopt;
 		std::optional<double> frameCenterLongitude = std::nullopt;
 		std::optional<double> frameCenterElevation = std::nullopt;

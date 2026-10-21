@@ -120,15 +120,14 @@ namespace Network
 			auto j = json::parse(jsonLine);
 
 			Models::TelemetryFrame frame{};
-			frame.sensorLatitude = j.value(Constants::TelemetryJsonKeys::SENSOR_LATITUDE, 0.0);
-			frame.sensorLongitude = j.value(Constants::TelemetryJsonKeys::SENSOR_LONGITUDE, 0.0);
-			frame.sensorAltitudeMeters = j.value(Constants::TelemetryJsonKeys::SENSOR_ALTITUDE_METERS, 0.0);
-			frame.platformHeadingDeg = j.value(Constants::TelemetryJsonKeys::PLATFORM_HEADING_DEG, 0.0);
-			frame.platformPitchDeg = j.value(Constants::TelemetryJsonKeys::PLATFORM_PITCH_DEG, 0.0);
-			frame.platformRollDeg = j.value(Constants::TelemetryJsonKeys::PLATFORM_ROLL_DEG, 0.0);
-			frame.gimbalAzimuthDeg = j.value(Constants::TelemetryJsonKeys::GIMBAL_AZIMUTH_DEG, 0.0);
-			frame.gimbalElevationDeg = j.value(Constants::TelemetryJsonKeys::GIMBAL_ELEVATION_DEG, 0.0);
-			frame.gimbalRollDeg = j.value(Constants::TelemetryJsonKeys::GIMBAL_ROLL_DEG, 0.0);
+			frame.sensorLatitude = j.value(Constants::TelemetryJsonKeys::SENSOR_LATITUDE, std::optional<double>{});
+			frame.sensorLongitude = j.value(Constants::TelemetryJsonKeys::SENSOR_LONGITUDE, std::optional<double>{});
+			frame.sensorAltitudeMeters = j.value(Constants::TelemetryJsonKeys::SENSOR_ALTITUDE_METERS, std::optional<double>{});
+			frame.platformHeadingDeg = j.value(Constants::TelemetryJsonKeys::PLATFORM_HEADING_DEG, std::optional<double>{});
+			frame.platformPitchDeg = j.value(Constants::TelemetryJsonKeys::PLATFORM_PITCH_DEG, std::optional<double>{});
+			frame.platformRollDeg = j.value(Constants::TelemetryJsonKeys::PLATFORM_ROLL_DEG, std::optional<double>{});
+			frame.gimbalAzimuthDeg = j.value(Constants::TelemetryJsonKeys::GIMBAL_AZIMUTH_DEG, std::optional<double>{});
+			frame.gimbalElevationDeg = j.value(Constants::TelemetryJsonKeys::GIMBAL_ELEVATION_DEG, std::optional<double>{});
 			frame.frameCenterLatitude = j.value(Constants::TelemetryJsonKeys::FRAME_CENTER_LATITUDE, std::optional<double>{});
 			frame.frameCenterLongitude = j.value(Constants::TelemetryJsonKeys::FRAME_CENTER_LONGITUDE, std::optional<double>{});
 			frame.frameCenterElevation = j.value(Constants::TelemetryJsonKeys::FRAME_CENTER_ELEVATION, std::optional<double>{});
