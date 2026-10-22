@@ -21,7 +21,7 @@ namespace Constants
         inline constexpr char CONNECTION_LOST[] = "Connection lost with LTS. Attempting to reconnect...";
         inline constexpr char PARSE_ERROR[] = "Failed to parse telemetry JSON: {}";
         inline constexpr char RUNNING_WAITING[] = "Running... Press ENTER to exit.";
-        inline constexpr char CALC_RAY[] = "Creating ray for gimbalAzimuthDeg: {}";
+        inline constexpr char CALC_RAY[] = "Created ray for GPS: {}, -->: {}";
     }
 
     namespace TelemetryJsonKeys 
