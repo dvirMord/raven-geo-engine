@@ -13,21 +13,38 @@ namespace Math
     {
         Models::Ray ray;
 
+        // findMissingRayFields must pass before this, so every value exists
         ray.direction = this->calculateVWorld(
-            frame.platformRollDeg,
-            frame.platformPitchDeg,
-            frame.platformHeadingDeg,
-            frame.gimbalAzimuthDeg,
-            frame.gimbalElevationDeg
+            frame.platformRollDeg.value(),
+            frame.platformPitchDeg.value(),
+            frame.platformHeadingDeg.value(),
+            frame.gimbalAzimuthDeg.value(),
+            frame.gimbalElevationDeg.value()
         );
 
         ray.origin = RavenMaths::Vector3D(
-            frame.sensorLatitude,
-            frame.sensorLongitude,
-            frame.sensorAltitudeMeters
+            frame.sensorLatitude.value(),
+            frame.sensorLongitude.value(),
+            frame.sensorAltitudeMeters.value()
         );
         spdlog::info(Constants::Logs::CALC_RAY, ray.origin.toString(), ray.direction.toString());
         return ray;
+    }
+
+    std::vector<std::string> GeoCalculator::findMissingRayFields(const Models::TelemetryFrame& frame)
+    {
+        std::vector<std::string> missingFields;
+
+        if (!frame.sensorLatitude) missingFields.push_back(Constants::TelemetryJsonKeys::SENSOR_LATITUDE);
+        if (!frame.sensorLongitude) missingFields.push_back(Constants::TelemetryJsonKeys::SENSOR_LONGITUDE);
+        if (!frame.sensorAltitudeMeters) missingFields.push_back(Constants::TelemetryJsonKeys::SENSOR_ALTITUDE_METERS);
+        if (!frame.platformHeadingDeg) missingFields.push_back(Constants::TelemetryJsonKeys::PLATFORM_HEADING_DEG);
+        if (!frame.platformPitchDeg) missingFields.push_back(Constants::TelemetryJsonKeys::PLATFORM_PITCH_DEG);
+        if (!frame.platformRollDeg) missingFields.push_back(Constants::TelemetryJsonKeys::PLATFORM_ROLL_DEG);
+        if (!frame.gimbalAzimuthDeg) missingFields.push_back(Constants::TelemetryJsonKeys::GIMBAL_AZIMUTH_DEG);
+        if (!frame.gimbalElevationDeg) missingFields.push_back(Constants::TelemetryJsonKeys::GIMBAL_ELEVATION_DEG);
+
+        return missingFields;
     }
 
 	double GeoCalculator::toRadians(const double degrees)

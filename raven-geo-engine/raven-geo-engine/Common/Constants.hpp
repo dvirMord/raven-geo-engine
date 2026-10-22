@@ -26,8 +26,11 @@ namespace Constants
 		inline constexpr char DRONE_BELOW_GROUND_WARNING[] = "The drone is below the ground level. Drone altitude: {}, Ground altitude: {}";
 		inline constexpr char CALC_GROUND_INTERSECTION_ERROR[] = "Ground intersection point calculated, at: ({},{}). slant range: {} meters. the error is: {} meters";
 		inline constexpr char CALC_GROUND_INTERSECTION[] = "Ground intersection point calculated, at: ({},{}). slant range: {} meters";
+		inline constexpr char RAY_FIELDS_MISSING[] = "Missing telemetry fields: [{}], frame skipped.";
 		inline constexpr char FRAME_CENTER_ELEVATION_MISSING[] = "No ground height, frame skipped.";  
 		inline constexpr char FRAME_CENTER_LATITUDE_AND_LONGITUDE_MISSING[] = "Frame center latitude and longitude are missing in the telemetry frame can't calculate the error.";
+		inline constexpr char START_CALC[] = "=====================Calculation for telemetry frame=====================";
+		inline constexpr char CALCULATION_COMPLETE[] = "=====================Calculation complete=====================\n\n";
     }
 
     namespace TelemetryJsonKeys 
@@ -40,7 +43,6 @@ namespace Constants
         inline constexpr char PLATFORM_ROLL_DEG[] = "PlatformRollDeg";
         inline constexpr char GIMBAL_AZIMUTH_DEG[] = "GimbalAzimuthDeg";
         inline constexpr char GIMBAL_ELEVATION_DEG[] = "GimbalElevationDeg";
-        inline constexpr char GIMBAL_ROLL_DEG[] = "GimbalRollDeg";
 		inline constexpr char FRAME_CENTER_LATITUDE[] = "FrameCenterLatitude"; 
 		inline constexpr char FRAME_CENTER_LONGITUDE[] = "FrameCenterLongitude";
 		inline constexpr char FRAME_CENTER_ELEVATION[] = "FrameCenterElevation";
