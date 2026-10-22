@@ -68,5 +68,8 @@
     <ClInclude Include="..\..\..\..\..\..\Downloads\json.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Models\GroundIntersection.hpp">
+      <Filter>Header Files\Models</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
