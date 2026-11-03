@@ -9,6 +9,12 @@ using RavenMaths::Vector3D;
 
 namespace Math 
 {
+    // a reference member can only be bound here, in the initializer list - never assigned in the body
+    GeoCalculator::GeoCalculator(const IHeightProvider& heightProvider)
+        : _heightProvider(heightProvider)
+    {
+    }
+
     Models::Ray GeoCalculator::calculateRay(const Models::TelemetryFrame& frame) 
     {
         Models::Ray ray;

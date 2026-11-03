@@ -1,18 +1,21 @@
 #pragma once
 #include "IGeoCalculator.hpp"
 #include "../Common/Constants.hpp"
+#include "../Terrain/IHeightProvider.hpp"
 #include <iostream>
 
 using RavenMaths::Matrix3x3;
 using RavenMaths::Vector3D;
+using Terrain::IHeightProvider;
 
 namespace Math 
 {
 
     class GeoCalculator : public IGeoCalculator 
     {
-    public:
-        GeoCalculator() = default;
+    public: 
+        // the provider is only borrowed - whoever creates it must keep it alive longer than the calculator
+        explicit GeoCalculator(const IHeightProvider& heightProvider);
         ~GeoCalculator() override = default;
 
 		//math functions
@@ -34,6 +37,8 @@ namespace Math
 
 		// clac the ground intersection point from the ray and the ground plane
 		std::optional<Models::GroundIntersection> castRayToFlatGround(const Models::Ray& ray, double groundAltitudeMeters) override;
+   
+    private:
+        const IHeightProvider& _heightProvider;
     };
-
 } 

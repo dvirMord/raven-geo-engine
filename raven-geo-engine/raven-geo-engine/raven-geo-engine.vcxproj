@@ -148,10 +148,14 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Network\TcpSocketReceiver.cpp" />
     <ClCompile Include="Math\GeoCalculator.cpp" />
+    <ClCompile Include="Terrain\GeoTiffHeightProvider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\..\..\Downloads\json.hpp" />
     <ClInclude Include="Common\Constants.hpp" />
+    <ClInclude Include="Terrain\GeoTiffHeightProvider.hpp" />
+    <ClInclude Include="Models\HeightTileHeader.hpp" />
+    <ClInclude Include="Terrain\IHeightProvider.hpp" />
     <ClInclude Include="Models\GroundIntersection.hpp" />
     <ClInclude Include="Models\TelemetryFrame.hpp" />
     <ClInclude Include="Models\Ray.hpp" />
