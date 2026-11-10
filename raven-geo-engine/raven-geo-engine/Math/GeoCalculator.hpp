@@ -14,7 +14,6 @@ namespace Math
     class GeoCalculator : public IGeoCalculator 
     {
     public: 
-        // the provider is only borrowed - whoever creates it must keep it alive longer than the calculator
         explicit GeoCalculator(const IHeightProvider& heightProvider);
         ~GeoCalculator() override = default;
 

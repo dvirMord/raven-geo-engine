@@ -8,8 +8,8 @@ namespace Models
 	// row 0 / column 0 starts here: rows go south, columns go east
 	struct NorthWestCorner
 	{
-		double latitude = 0.0; // Latitude of the corner in degrees
-		double longitude = 0.0; // Longitude of the corner in degrees
+		double latitudeDegrees = 0.0;
+		double longitudeDegrees = 0.0;
 	};
 
 	struct HeightTileHeader

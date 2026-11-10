@@ -152,8 +152,8 @@ The code:
 | `Terrain/IHeightProvider.hpp` | The interface: one function, `getHeightMeters(latitude, longitude)` → height or `nullopt` |
 | `Terrain/GeoTiffHeightProvider.hpp/.cpp` | The implementation that reads the `.tif` tiles |
 | `Models/HeightTileHeader.hpp` | One tile in memory: corner, cell size, rows, columns, all heights |
-| `Common/Constants.hpp` → `GeoTiff` | Tag numbers, array positions, and the tile paths (`TILE_PATHS`) |
-| `main.cpp` | Creates the provider at startup and passes it to `GeoCalculator` |
+| `Common/Constants.hpp` → `GeoTiff` | Tag numbers, array positions, and the names of the tile-path environment variables (`TILE_PATH_ENV_VARS`) |
+| `main.cpp` | Loads `.env`, reads the tile paths from the environment, creates the provider at startup, and passes it to `GeoCalculator` |
 
 **Why an interface:** the rest of the engine only asks "how high is the ground here?" and doesn't care where the answer comes from.
 Later we can add another source (flat ground for testing, or a sharper lidar map) without changing the ray code.
@@ -168,8 +168,17 @@ Later we can add another source (flat ground for testing, or a sharper lidar map
    ```text
    vcpkg install tiff[zip]:x64-windows
    ```
-2. Download the 3 tiles (section 3) into a folder.
-3. Point `Constants::GeoTiff::TILE_PATHS` in `Common/Constants.hpp` at them.
+2. Download the 3 tiles (section 3).
+3. Copy `.env.example` (next to `main.cpp`) to `.env` and set the full path of each tile:
+   ```text
+   RAVEN_DSM_TILE_CHEYENNE=C:\path\to\DEM\copernicus\N41W105_Cheyenne_truck.tif
+   RAVEN_DSM_TILE_FLORIDA=C:\path\to\DEM\copernicus\N27W082_Florida_Esri_multiplexer.tif
+   RAVEN_DSM_TILE_NORTH_CAROLINA=C:\path\to\DEM\copernicus\N35W080_NorthCarolina_klv_metadata_test_sync.tif
+   ```
+   The engine reads `.env` at startup. `.env` is not committed, so each machine keeps its own.
+   Write it exactly as `KEY=VALUE`: no spaces around `=` and no quotes.
+   A variable that isn't set is logged and its tile is skipped.
+   To add a tile: add its variable name to `TILE_PATH_ENV_VARS` in `Common/Constants.hpp` and its path to `.env`.
 4. Build and run. The log should show `Loaded 3 of 3 terrain tiles.`
 
 ---

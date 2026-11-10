@@ -1,7 +1,5 @@
 #pragma once
 #include <cstdint>
-#include <string>
-#include <vector>
 
 namespace Constants
 {
@@ -38,6 +36,9 @@ namespace Constants
 		inline constexpr char TILE_LOAD_FAILED[] = "Failed to load terrain tile: {}, skipped.";
 		inline constexpr char TILES_LOADED_SUMMARY[] = "Loaded {} of {} terrain tiles.";
 		inline constexpr char NO_TILES_LOADED[] = "No terrain tiles were loaded - every frame will have no ground height. Check the tile paths.";
+		inline constexpr char TILE_PATH_ENV_MISSING[] = "Environment variable {} is not set - that tile is skipped.";
+		inline constexpr char DOTENV_LOADED[] = "Loaded settings from {}";
+		inline constexpr char DOTENV_NOT_FOUND[] = "No {} file in the working folder - using the system environment only.";
 		inline constexpr char DSM_NO_TILE_AT_FRAME_CENTER[] = "No terrain tile covers frame center ({:.6f}, {:.6f}).";
 		inline constexpr char DSM_VS_FRAME_CENTER_ELEVATION[] = "Ground height at frame center: telemetry {:.2f} m, DSM {:.2f} m, diff {:+.2f} m";
 		inline constexpr char DSM_AT_FRAME_CENTER_NO_ELEVATION[] = "DSM at frame center: {:.2f} m (no frame center elevation to compare).";
@@ -64,6 +65,12 @@ namespace Constants
 		inline constexpr double EARTH_RADIUS_M = 6371000.0;
     }
 
+    namespace DotEnv
+    {
+        // read from the working folder - in Visual Studio that is the project folder, next to main.cpp
+        inline constexpr char FILE_NAME[] = ".env";
+    }
+
     namespace GeoTiff
     {
         // tag holding the size of one cell: [lon size, lat size, 0] in degrees
@@ -84,12 +91,13 @@ namespace Constants
         // the heights are read straight into a float grid, so every value must be a 32 bit float
         inline constexpr uint16_t HEIGHT_BITS_PER_SAMPLE = 32;
 
-        // the Copernicus 30 m DSM tiles the engine loads at startup (see DEM/copernicus/README.md)
-        inline const std::vector<std::string> TILE_PATHS =
+        // one environment variable per DSM tile, each holding the full path of its .tif file
+        // (kept out of the code because the paths are different on every machine - set them in .env)
+        inline constexpr const char* TILE_PATH_ENV_VARS[] =
         {
-            R"(C:\Users\dvirm\Desktop\learning for  108\TheProject\DEM\copernicus\N41W105_Cheyenne_truck.tif)",
-            R"(C:\Users\dvirm\Desktop\learning for  108\TheProject\DEM\copernicus\N27W082_Florida_Esri_multiplexer.tif)",
-            R"(C:\Users\dvirm\Desktop\learning for  108\TheProject\DEM\copernicus\N35W080_NorthCarolina_klv_metadata_test_sync.tif)",
+            "RAVEN_DSM_TILE_CHEYENNE",
+            "RAVEN_DSM_TILE_FLORIDA",
+            "RAVEN_DSM_TILE_NORTH_CAROLINA",
         };
     }
 }

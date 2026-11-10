@@ -1,8 +1,12 @@
+#include <cstdlib>
 #include <iostream>
 #include <memory>
+#include <string>
+#include <vector>
 #include <spdlog/spdlog.h>
 #include <spdlog/fmt/ranges.h>
 #include "Common/Constants.hpp"
+#include "Common/DotEnv.hpp"
 #include "Network/TcpSocketReceiver.hpp"
 #include "Math/GeoCalculator.hpp"
 #include "Terrain/GeoTiffHeightProvider.hpp"
@@ -12,6 +16,22 @@ using std::nullopt;
 
 namespace
 {
+	std::vector<std::string> readTilePaths()
+	{
+		std::vector<std::string> tilePaths;
+		for (const char* envVarName : Constants::GeoTiff::TILE_PATH_ENV_VARS)
+		{
+			const char* tilePath = std::getenv(envVarName);
+			if (tilePath == nullptr)
+			{
+				spdlog::warn(Constants::Logs::TILE_PATH_ENV_MISSING, envVarName);
+				continue;
+			}
+			tilePaths.push_back(tilePath);
+		}
+		return tilePaths;
+	}
+
 	// compare the DSM height at the frame center with the telemetry's own frame center elevation (log only)
 	void logDsmVsFrameCenter(const Models::TelemetryFrame& frame, const Terrain::IHeightProvider& heightProvider)
 	{
@@ -60,9 +80,12 @@ int main()
 {
     spdlog::info(Constants::Logs::ENGINE_STARTING);
 
+    // first, so every setting below (like the tiles folder) can come from the .env file
+    Common::loadDotEnv(Constants::DotEnv::FILE_NAME);
+
     // load every terrain tile once, before any frame arrives.
     // created first so it outlives the calculator that borrows it
-    GeoTiffHeightProvider heightProvider(Constants::GeoTiff::TILE_PATHS);
+    GeoTiffHeightProvider heightProvider(readTilePaths());
     auto calculator = std::make_shared<Math::GeoCalculator>(heightProvider);
     Network::TcpSocketReceiver receiver(Constants::Network::DEFAULT_HOST, Constants::Network::LTS_SOCKET_PORT);
 

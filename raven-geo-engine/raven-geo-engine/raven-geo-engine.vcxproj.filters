@@ -39,6 +39,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Common\DotEnv.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -53,6 +56,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Common\DotEnv.hpp">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
     <ClInclude Include="Common\Constants.hpp">
       <Filter>Header Files\Common</Filter>
     </ClInclude>
@@ -89,5 +95,9 @@
     <ClInclude Include="Terrain\GeoTiffHeightProvider.hpp">
       <Filter>Header Files\Terrain</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".env" />
+    <None Include=".env.example" />
   </ItemGroup>
 </Project>
