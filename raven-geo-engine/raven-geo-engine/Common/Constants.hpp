@@ -1,6 +1,7 @@
 #pragma once
+#include <cstdint>
 
-namespace Constants 
+namespace Constants
 {
     namespace Network 
     {
@@ -21,16 +22,26 @@ namespace Constants
         inline constexpr char CONNECTION_LOST[] = "Connection lost with LTS. Attempting to reconnect...";
         inline constexpr char PARSE_ERROR[] = "Failed to parse telemetry JSON: {}";
         inline constexpr char RUNNING_WAITING[] = "Running... Press ENTER to exit.";
-        inline constexpr char CALC_RAY[] = "Created ray for GPS: {}, -->: {}";
+        inline constexpr char CALC_RAY[] = "Ray: from drone (lat, lon, alt m) {}, direction (north, east, down) {}";
 		inline constexpr char CALC_Z_POINT_WARNING[] = "The ray is pointing upwards / above the horizon (negative z direction): Ray: {}";
-		inline constexpr char DRONE_BELOW_GROUND_WARNING[] = "The drone is below the ground level. Drone altitude: {}, Ground altitude: {}";
-		inline constexpr char CALC_GROUND_INTERSECTION_ERROR[] = "Ground intersection point calculated, at: ({},{}). slant range: {} meters. the error is: {} meters";
-		inline constexpr char CALC_GROUND_INTERSECTION[] = "Ground intersection point calculated, at: ({},{}). slant range: {} meters";
+		inline constexpr char DRONE_BELOW_GROUND_WARNING[] = "The drone is below the ground level. Drone altitude: {:.2f} m, ground altitude: {:.2f} m";
+		inline constexpr char CALC_GROUND_INTERSECTION_ERROR[] = "Hit point: ({:.6f}, {:.6f}), slant range: {:.2f} m, error vs frame center: {:.2f} m";
+		inline constexpr char CALC_GROUND_INTERSECTION[] = "Hit point: ({:.6f}, {:.6f}), slant range: {:.2f} m";
 		inline constexpr char RAY_FIELDS_MISSING[] = "Missing telemetry fields: [{}], frame skipped.";
 		inline constexpr char FRAME_CENTER_ELEVATION_MISSING[] = "No ground height, frame skipped.";  
 		inline constexpr char FRAME_CENTER_LATITUDE_AND_LONGITUDE_MISSING[] = "Frame center latitude and longitude are missing in the telemetry frame can't calculate the error.";
 		inline constexpr char START_CALC[] = "=====================Calculation for telemetry frame=====================";
 		inline constexpr char CALCULATION_COMPLETE[] = "=====================Calculation complete=====================\n\n";
+		inline constexpr char TILE_LOADED[] = "Loaded terrain tile: {}";
+		inline constexpr char TILE_LOAD_FAILED[] = "Failed to load terrain tile: {}, skipped.";
+		inline constexpr char TILES_LOADED_SUMMARY[] = "Loaded {} of {} terrain tiles.";
+		inline constexpr char NO_TILES_LOADED[] = "No terrain tiles were loaded - every frame will have no ground height. Check the tile paths.";
+		inline constexpr char TILE_PATH_ENV_MISSING[] = "Environment variable {} is not set - that tile is skipped.";
+		inline constexpr char DOTENV_LOADED[] = "Loaded settings from {}";
+		inline constexpr char DOTENV_NOT_FOUND[] = "No {} file in the working folder - using the system environment only.";
+		inline constexpr char DSM_NO_TILE_AT_FRAME_CENTER[] = "No terrain tile covers frame center ({:.6f}, {:.6f}).";
+		inline constexpr char DSM_VS_FRAME_CENTER_ELEVATION[] = "Ground height at frame center: telemetry {:.2f} m, DSM {:.2f} m, diff {:+.2f} m";
+		inline constexpr char DSM_AT_FRAME_CENTER_NO_ELEVATION[] = "DSM at frame center: {:.2f} m (no frame center elevation to compare).";
     }
 
     namespace TelemetryJsonKeys 
@@ -52,5 +63,41 @@ namespace Constants
     {
         inline constexpr double SEMICIRCLE_DEGREES = 180.0;
 		inline constexpr double EARTH_RADIUS_M = 6371000.0;
+    }
+
+    namespace DotEnv
+    {
+        // read from the working folder - in Visual Studio that is the project folder, next to main.cpp
+        inline constexpr char FILE_NAME[] = ".env";
+    }
+
+    namespace GeoTiff
+    {
+        // tag holding the size of one cell: [lon size, lat size, 0] in degrees
+        inline constexpr uint32_t CELL_SIZE_TAG = 33550;
+        // tag tying cell [0][0] to a place on earth: [col, row, 0, lon, lat, 0]
+        inline constexpr uint32_t CORNER_TAG = 33922;
+
+        // where each value sits inside the tag arrays
+        inline constexpr int CELL_SIZE_LON_INDEX = 0;
+        inline constexpr int CELL_SIZE_LAT_INDEX = 1;
+        inline constexpr int CORNER_LON_INDEX = 3;
+        inline constexpr int CORNER_LAT_INDEX = 4;
+
+        // fewer values than this means the tag is broken - reading the indexes above would overflow
+        inline constexpr uint32_t CELL_SIZE_MIN_COUNT = 2;
+        inline constexpr uint32_t CORNER_MIN_COUNT = 5;
+
+        // the heights are read straight into a float grid, so every value must be a 32 bit float
+        inline constexpr uint16_t HEIGHT_BITS_PER_SAMPLE = 32;
+
+        // one environment variable per DSM tile, each holding the full path of its .tif file
+        // (kept out of the code because the paths are different on every machine - set them in .env)
+        inline constexpr const char* TILE_PATH_ENV_VARS[] =
+        {
+            "RAVEN_DSM_TILE_CHEYENNE",
+            "RAVEN_DSM_TILE_FLORIDA",
+            "RAVEN_DSM_TILE_NORTH_CAROLINA",
+        };
     }
 }

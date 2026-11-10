@@ -31,8 +31,17 @@
     <Filter Include="Source Files\Math">
       <UniqueIdentifier>{f6a1b2c3-d4e5-4f6a-d17c-8d9e0f1a2b3c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Terrain">
+      <UniqueIdentifier>{878ec271-c437-4888-8e95-8ddcfb149272}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Terrain">
+      <UniqueIdentifier>{2c7e9a41-5b3d-4f8e-9a6c-1d2e3f4a5b6c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Common\DotEnv.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -42,8 +51,14 @@
     <ClCompile Include="Math\GeoCalculator.cpp">
       <Filter>Source Files\Math</Filter>
     </ClCompile>
+    <ClCompile Include="Terrain\GeoTiffHeightProvider.cpp">
+      <Filter>Source Files\Terrain</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Common\DotEnv.hpp">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
     <ClInclude Include="Common\Constants.hpp">
       <Filter>Header Files\Common</Filter>
     </ClInclude>
@@ -71,5 +86,18 @@
     <ClInclude Include="Models\GroundIntersection.hpp">
       <Filter>Header Files\Models</Filter>
     </ClInclude>
+    <ClInclude Include="Terrain\IHeightProvider.hpp">
+      <Filter>Header Files\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="Models\HeightTileHeader.hpp">
+      <Filter>Header Files\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="Terrain\GeoTiffHeightProvider.hpp">
+      <Filter>Header Files\Terrain</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".env" />
+    <None Include=".env.example" />
   </ItemGroup>
 </Project>

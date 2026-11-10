@@ -146,12 +146,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Common\DotEnv.cpp" />
     <ClCompile Include="Network\TcpSocketReceiver.cpp" />
     <ClCompile Include="Math\GeoCalculator.cpp" />
+    <ClCompile Include="Terrain\GeoTiffHeightProvider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\..\..\Downloads\json.hpp" />
     <ClInclude Include="Common\Constants.hpp" />
+    <ClInclude Include="Common\DotEnv.hpp" />
+    <ClInclude Include="Terrain\GeoTiffHeightProvider.hpp" />
+    <ClInclude Include="Models\HeightTileHeader.hpp" />
+    <ClInclude Include="Terrain\IHeightProvider.hpp" />
     <ClInclude Include="Models\GroundIntersection.hpp" />
     <ClInclude Include="Models\TelemetryFrame.hpp" />
     <ClInclude Include="Models\Ray.hpp" />
@@ -164,6 +170,10 @@
     <ProjectReference Include="..\..\..\raven-math\raven-math\raven-math\raven-math.vcxproj">
       <Project>{c53a637d-4d5f-4a27-84f4-726843dc01fe}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".env" />
+    <None Include=".env.example" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
