@@ -161,6 +161,10 @@
     <ClInclude Include="Models\GroundIntersection.hpp" />
     <ClInclude Include="Models\TelemetryFrame.hpp" />
     <ClInclude Include="Models\Ray.hpp" />
+    <ClInclude Include="Models\Bounds.hpp" />
+    <ClInclude Include="Models\RayHitResult.hpp" />
+    <ClInclude Include="Models\TerrainBlock.hpp" />
+    <ClInclude Include="Models\TerrainCell.hpp" />
     <ClInclude Include="Network\ITelemetryReceiver.hpp" />
     <ClInclude Include="Network\TcpSocketReceiver.hpp" />
     <ClInclude Include="Math\IGeoCalculator.hpp" />

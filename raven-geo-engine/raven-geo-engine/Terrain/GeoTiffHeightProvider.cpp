@@ -69,8 +69,8 @@ namespace Terrain
 			}
 
 			// copy the values now - scale and tie belong to libtiff and are freed when the file closes
-			tileHeader.northWestCorner.latitude = tie[Constants::GeoTiff::CORNER_LAT_INDEX];
-			tileHeader.northWestCorner.longitude = tie[Constants::GeoTiff::CORNER_LON_INDEX];
+			tileHeader.northWestCorner.latitudeDegrees = tie[Constants::GeoTiff::CORNER_LAT_INDEX];
+			tileHeader.northWestCorner.longitudeDegrees = tie[Constants::GeoTiff::CORNER_LON_INDEX];
 			tileHeader.sizeOfCellLatDegrees = scale[Constants::GeoTiff::CELL_SIZE_LAT_INDEX];
 			tileHeader.sizeOfCellLonDegrees = scale[Constants::GeoTiff::CELL_SIZE_LON_INDEX];
 			return true;
@@ -179,8 +179,8 @@ namespace Terrain
 	{
 		for (const auto& tile : this->_tiles)
 		{
-			double latitudeInrow = (tile.northWestCorner.latitude - latitude) / tile.sizeOfCellLatDegrees;
-			double longitudeIncolumn = (longitude - tile.northWestCorner.longitude) / tile.sizeOfCellLonDegrees;
+			double latitudeInrow = (tile.northWestCorner.latitudeDegrees - latitude) / tile.sizeOfCellLatDegrees;
+			double longitudeIncolumn = (longitude - tile.northWestCorner.longitudeDegrees) / tile.sizeOfCellLonDegrees;
 
 			if (latitudeInrow < 0 || longitudeIncolumn < 0)
 			{

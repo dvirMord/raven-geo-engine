@@ -68,6 +68,18 @@
     <ClInclude Include="Models\Ray.hpp">
       <Filter>Header Files\Models</Filter>
     </ClInclude>
+    <ClInclude Include="Models\Bounds.hpp">
+      <Filter>Header Files\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="Models\RayHitResult.hpp">
+      <Filter>Header Files\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="Models\TerrainBlock.hpp">
+      <Filter>Header Files\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="Models\TerrainCell.hpp">
+      <Filter>Header Files\Models</Filter>
+    </ClInclude>
     <ClInclude Include="Network\ITelemetryReceiver.hpp">
       <Filter>Header Files\Network</Filter>
     </ClInclude>
