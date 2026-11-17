@@ -10,8 +10,10 @@
 #include "Network/TcpSocketReceiver.hpp"
 #include "Math/GeoCalculator.hpp"
 #include "Terrain/GeoTiffHeightProvider.hpp"
+#include "Models/TerrainCell.hpp"
 
 using Terrain::GeoTiffHeightProvider;
+using Models::TerrainCell;
 using std::nullopt;
 
 namespace
@@ -40,19 +42,19 @@ namespace
 			return;
 		}
 
-		std::optional<double> dsmHeight = heightProvider.getHeightMeters(frame.frameCenterLatitude.value(), frame.frameCenterLongitude.value());
-		if (dsmHeight == nullopt)
+		std::optional<TerrainCell> dsmCell = heightProvider.getCellAt(frame.frameCenterLatitude.value(), frame.frameCenterLongitude.value());
+		if (dsmCell == nullopt)
 		{
 			spdlog::warn(Constants::Logs::DSM_NO_TILE_AT_FRAME_CENTER, frame.frameCenterLatitude.value(), frame.frameCenterLongitude.value());
 		}
 		else if (frame.frameCenterElevation != nullopt)
 		{
-			double diff = frame.frameCenterElevation.value() - dsmHeight.value();
-			spdlog::info(Constants::Logs::DSM_VS_FRAME_CENTER_ELEVATION, frame.frameCenterElevation.value(), dsmHeight.value(), diff);
+			double diff = frame.frameCenterElevation.value() - dsmCell.value().heightMeters;
+			spdlog::info(Constants::Logs::DSM_VS_FRAME_CENTER_ELEVATION, frame.frameCenterElevation.value(), dsmCell.value().heightMeters, diff);
 		}
 		else
 		{
-			spdlog::info(Constants::Logs::DSM_AT_FRAME_CENTER_NO_ELEVATION, dsmHeight.value());
+			spdlog::info(Constants::Logs::DSM_AT_FRAME_CENTER_NO_ELEVATION, dsmCell.value().heightMeters);
 		}
 	}
 

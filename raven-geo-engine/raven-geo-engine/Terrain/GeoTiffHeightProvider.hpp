@@ -1,9 +1,11 @@
 #pragma once
 #include "IHeightProvider.hpp"
 #include "../Models/HeightTileHeader.hpp"
+#include "../Models/TerrainCell.hpp"
 #include <string>
 #include <vector>
 #include <optional>
+using Models::TerrainCell;
 using std::string;
 using std::vector;
 using std::optional;
@@ -17,7 +19,7 @@ namespace Terrain
 		explicit GeoTiffHeightProvider(const vector<string>& tilesPaths);
 		~GeoTiffHeightProvider() override = default;
 
-		optional<double> getHeightMeters(const double latitude, const double longitude) const override;
+		optional<TerrainCell> getCellAt(const double latitude, const double longitude) const override;
 
 	private:
 		vector<Models::HeightTileHeader> _tiles;

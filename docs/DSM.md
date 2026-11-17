@@ -142,14 +142,15 @@ engine starts
        └─ "Loaded 3 of 3 terrain tiles."
 
 every telemetry frame
-  └─ getHeightMeters(lat, lon) → height in meters, or nullopt
+  └─ getCellAt(lat, lon) → the cell at the point (height in meters + its north/south/west/east bounds in degrees), or nullopt
 ```
 
 The code:
 
 | File | What it is |
 | --- | --- |
-| `Terrain/IHeightProvider.hpp` | The interface: one function, `getHeightMeters(latitude, longitude)` → height or `nullopt` |
+| `Terrain/IHeightProvider.hpp` | The interface: one function, `getCellAt(latitude, longitude)` → `TerrainCell` (height + bounds) or `nullopt` |
+| `Models/TerrainCell.hpp`, `Models/Bounds.hpp` | One cell: its height in meters and its four bounds in degrees. Rows go south from the tile's north-west corner and columns go east, so the north bound is corner − row × cell size and the west bound is corner + col × cell size |
 | `Terrain/GeoTiffHeightProvider.hpp/.cpp` | The implementation that reads the `.tif` tiles |
 | `Models/HeightTileHeader.hpp` | One tile in memory: corner, cell size, rows, columns, all heights |
 | `Common/Constants.hpp` → `GeoTiff` | Tag numbers, array positions, and the names of the tile-path environment variables (`TILE_PATH_ENV_VARS`) |

@@ -175,7 +175,7 @@ namespace Terrain
 		return tileHeader;
 	}
 
-	optional<double> GeoTiffHeightProvider::getHeightMeters(const double latitude, const double longitude) const
+	optional<TerrainCell> GeoTiffHeightProvider::getCellAt(const double latitude, const double longitude) const
 	{
 		for (const auto& tile : this->_tiles)
 		{
@@ -184,7 +184,7 @@ namespace Terrain
 
 			if (latitudeInrow < 0 || longitudeIncolumn < 0)
 			{
-				continue;  // the point is north or east of the tile
+				continue; // the point is north or west of the tile
 			}
 
 			size_t row = static_cast<size_t>(latitudeInrow);
@@ -192,10 +192,18 @@ namespace Terrain
 
 			if(row >= tile.numCellsRows || col >= tile.numCellsColumns)
 			{
-				continue; // the point is north or east of the tile
+				continue; // the point is south or east of the tile
 			}
 
-			return tile.heightData[row * tile.numCellsColumns + col];
+			double height = tile.heightData[row * tile.numCellsColumns + col];
+			TerrainCell cell;
+			cell.heightMeters = height;
+			// rows go south from the corner (latitude shrinks), columns go east (longitude grows)
+			cell.bounds.northLatitudeDegrees = tile.northWestCorner.latitudeDegrees - (tile.sizeOfCellLatDegrees * row);
+			cell.bounds.southLatitudeDegrees = cell.bounds.northLatitudeDegrees - tile.sizeOfCellLatDegrees;
+			cell.bounds.westLongitudeDegrees = tile.northWestCorner.longitudeDegrees + (tile.sizeOfCellLonDegrees * col);
+			cell.bounds.eastLongitudeDegrees = cell.bounds.westLongitudeDegrees + tile.sizeOfCellLonDegrees;
+			return cell;
 		}
 		return nullopt; // no tile covers the point
 	}
