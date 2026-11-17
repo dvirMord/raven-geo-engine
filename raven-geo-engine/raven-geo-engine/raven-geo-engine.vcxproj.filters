@@ -51,6 +51,9 @@
     <ClCompile Include="Math\GeoCalculator.cpp">
       <Filter>Source Files\Math</Filter>
     </ClCompile>
+    <ClCompile Include="Math\GeoConversions.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
     <ClCompile Include="Terrain\GeoTiffHeightProvider.cpp">
       <Filter>Source Files\Terrain</Filter>
     </ClCompile>
@@ -90,6 +93,9 @@
       <Filter>Header Files\Math</Filter>
     </ClInclude>
     <ClInclude Include="Math\GeoCalculator.hpp">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\GeoConversions.hpp">
       <Filter>Header Files\Math</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\Downloads\json.hpp">

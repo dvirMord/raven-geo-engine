@@ -1,4 +1,5 @@
 #include "GeoCalculator.hpp"
+#include "GeoConversions.hpp"
 #include <cmath>
 #include <spdlog/spdlog.h>
 #include <numbers>
@@ -134,12 +135,11 @@ namespace Math
 		double eastMeters = slantRangeMeters * ray.direction.getY();
 
 		// converting the north/east meters to latitude/longitude
-        double deltaLat = toDegrees(northMeters / Constants::Math::EARTH_RADIUS_M);
-        double deltaLon = toDegrees(eastMeters / (Constants::Math::EARTH_RADIUS_M * std::cos(toRadians(ray.origin.getX()))));
+        DegreesOffset offset = metersToDegrees(northMeters, eastMeters, ray.origin.getX());
 
 		return  Models::GroundIntersection{
-			ray.origin.getX() + deltaLat,
-			ray.origin.getY() + deltaLon,
+			ray.origin.getX() + offset.latitudeDegrees,
+			ray.origin.getY() + offset.longitudeDegrees,
 			groundAltitudeMeters,
             slantRangeMeters
 		};  

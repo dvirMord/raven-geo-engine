@@ -149,6 +149,7 @@
     <ClCompile Include="Common\DotEnv.cpp" />
     <ClCompile Include="Network\TcpSocketReceiver.cpp" />
     <ClCompile Include="Math\GeoCalculator.cpp" />
+    <ClCompile Include="Math\GeoConversions.cpp" />
     <ClCompile Include="Terrain\GeoTiffHeightProvider.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -169,6 +170,7 @@
     <ClInclude Include="Network\TcpSocketReceiver.hpp" />
     <ClInclude Include="Math\IGeoCalculator.hpp" />
     <ClInclude Include="Math\GeoCalculator.hpp" />
+    <ClInclude Include="Math\GeoConversions.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\raven-math\raven-math\raven-math\raven-math.vcxproj">
