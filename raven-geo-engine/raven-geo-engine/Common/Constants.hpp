@@ -100,7 +100,7 @@ namespace Constants
             "RAVEN_DSM_TILE_NORTH_CAROLINA",
         };
 
-        //cells per block, each block keeps its max height so a ray can skip it
+        //cells per block each block keeps its max height so a ray can skip it
         inline constexpr uint16_t BLOCK_SIZE = 60;
     }
 }

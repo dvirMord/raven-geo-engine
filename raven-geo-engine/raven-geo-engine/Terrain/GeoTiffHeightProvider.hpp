@@ -2,9 +2,11 @@
 #include "IHeightProvider.hpp"
 #include "../Models/HeightTileHeader.hpp"
 #include "../Models/TerrainCell.hpp"
+#include "../Models/TerrainBlock.hpp"
 #include <string>
 #include <vector>
 #include <optional>
+using Models::TerrainBlock;
 using Models::TerrainCell;
 using std::string;
 using std::vector;
@@ -20,6 +22,7 @@ namespace Terrain
 		~GeoTiffHeightProvider() override = default;
 
 		optional<TerrainCell> getCellAt(const double latitude, const double longitude) const override;
+		optional<TerrainBlock> getBlockAt(const double latitude, const double longitude) const override;
 
 	private:
 		vector<Models::HeightTileHeader> _tiles;

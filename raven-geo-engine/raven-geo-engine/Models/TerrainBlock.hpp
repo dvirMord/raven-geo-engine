@@ -5,7 +5,7 @@ namespace Models
 {
 	struct TerrainBlock
 	{
-		double maxHeightMeters = 0.0;
+		float maxHeightMeters = 0.0;
 		Bounds bounds = {};
 	};
 }
