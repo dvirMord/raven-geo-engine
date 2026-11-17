@@ -6,9 +6,11 @@
 #include <utility>
 #include <spdlog/spdlog.h>
 #include <tiffio.h>
+#include <limits>
 
 using std::nullopt;
 using std::optional;
+using Constants::GeoTiff::BLOCK_SIZE;
 
 namespace Terrain
 {
@@ -20,34 +22,34 @@ namespace Terrain
 		{
 			size_t numRows = 0;
 			size_t numColumns = 0;
-			size_t blockWidth = 0;   // the file is split into blocks of this size (1024x1024 for Copernicus)
-			size_t blockHeight = 0;
+			size_t chunkWidth = 0;   // the file is split into chunks of this size (1024x1024 for Copernicus)
+			size_t chunkHeight = 0;
 		};
 
-		// read the grid size and block size - nullopt if the file isn't a grid of 32 bit floats split into blocks
+		// read the grid size and chunk size - nullopt if the file isn't a grid of 32 bit floats split into chunks
 		optional<GridLayout> readGridLayout(TIFF* tiff)
 		{
 			uint32_t numColumns = 0;
 			uint32_t numRows = 0;
-			uint32_t blockWidth = 0;
-			uint32_t blockHeight = 0;
+			uint32_t chunkWidth = 0;
+			uint32_t chunkHeight = 0;
 			TIFFGetField(tiff, TIFFTAG_IMAGEWIDTH, &numColumns);
 			TIFFGetField(tiff, TIFFTAG_IMAGELENGTH, &numRows);
-			TIFFGetField(tiff, TIFFTAG_TILEWIDTH, &blockWidth);
-			TIFFGetField(tiff, TIFFTAG_TILELENGTH, &blockHeight);
+			TIFFGetField(tiff, TIFFTAG_TILEWIDTH, &chunkWidth);
+			TIFFGetField(tiff, TIFFTAG_TILELENGTH, &chunkHeight);
 
 			uint16_t bitsPerSample = 0;
 			uint16_t sampleFormat = 0;
 			TIFFGetField(tiff, TIFFTAG_BITSPERSAMPLE, &bitsPerSample);
 			TIFFGetField(tiff, TIFFTAG_SAMPLEFORMAT, &sampleFormat);
 
-			// readHeights reads block by block straight into floats - any other layout would loop forever or give garbage heights
-			if (!TIFFIsTiled(tiff) || blockWidth == 0 || blockHeight == 0 || numColumns == 0 || numRows == 0
+			// readHeights reads chunk by chunk straight into floats - any other layout would loop forever or give garbage heights
+			if (!TIFFIsTiled(tiff) || chunkWidth == 0 || chunkHeight == 0 || numColumns == 0 || numRows == 0
 				|| bitsPerSample != Constants::GeoTiff::HEIGHT_BITS_PER_SAMPLE || sampleFormat != SAMPLEFORMAT_IEEEFP)
 			{
 				return nullopt;
 			}
-			return GridLayout{ numRows, numColumns, blockWidth, blockHeight };
+			return GridLayout{ numRows, numColumns, chunkWidth, chunkHeight };
 		}
 
 		// read where the grid sits on earth (corner + cell size) into the tile - false if the tags are missing or broken
@@ -76,46 +78,74 @@ namespace Terrain
 			return true;
 		}
 
-		// copy one unpacked block into its place in the big grid
-		void copyBlockIntoGrid(const vector<float>& block, size_t blockTopRow, size_t blockLeftColumn,
+		// copy one unpacked chunk into its place in the big grid
+		void copyChunkIntoGrid(const vector<float>& chunk, size_t chunkTopRow, size_t chunkLeftColumn,
 			const GridLayout& layout, vector<float>& heights)
 		{
-			// blocks on the right and bottom edges stick out past the grid - copy only the part inside it
-			size_t rowsInside = std::min(layout.blockHeight, layout.numRows - blockTopRow);
-			size_t columnsInside = std::min(layout.blockWidth, layout.numColumns - blockLeftColumn);
+			// chunks on the right and bottom edges stick out past the grid - copy only the part inside it
+			size_t rowsInside = std::min(layout.chunkHeight, layout.numRows - chunkTopRow);
+			size_t columnsInside = std::min(layout.chunkWidth, layout.numColumns - chunkLeftColumn);
 
-			for (size_t rowInBlock = 0; rowInBlock < rowsInside; ++rowInBlock)
+			for (size_t rowInChunk = 0; rowInChunk < rowsInside; ++rowInChunk)
 			{
 				// both are stored row after row, so a row starts at: row * rowLength + column
-				size_t blockRowStart = rowInBlock * layout.blockWidth;
-				size_t gridRowStart = (blockTopRow + rowInBlock) * layout.numColumns + blockLeftColumn;
+				size_t chunkRowStart = rowInChunk * layout.chunkWidth;
+				size_t gridRowStart = (chunkTopRow + rowInChunk) * layout.numColumns + chunkLeftColumn;
 
-				std::copy_n(block.begin() + blockRowStart, columnsInside, heights.begin() + gridRowStart);
+				std::copy_n(chunk.begin() + chunkRowStart, columnsInside, heights.begin() + gridRowStart);
 			}
 		}
 
-		// unpack every block of the file into one flat grid of heights - false if a block can't be read
+		// unpack every chunk of the file into one flat grid of heights - false if a chunk can't be read
 		bool readHeights(TIFF* tiff, const GridLayout& layout, vector<float>& heights)
 		{
 			heights.resize(layout.numRows * layout.numColumns);
-			vector<float> block(layout.blockWidth * layout.blockHeight);
+			vector<float> chunk(layout.chunkWidth * layout.chunkHeight);
 
-			for (size_t blockTopRow = 0; blockTopRow < layout.numRows; blockTopRow += layout.blockHeight)
+			for (size_t chunkTopRow = 0; chunkTopRow < layout.numRows; chunkTopRow += layout.chunkHeight)
 			{
-				for (size_t blockLeftColumn = 0; blockLeftColumn < layout.numColumns; blockLeftColumn += layout.blockWidth)
+				for (size_t chunkLeftColumn = 0; chunkLeftColumn < layout.numColumns; chunkLeftColumn += layout.chunkWidth)
 				{
-					// libtiff finds the block that holds this cell and unzips it into the buffer
-					tmsize_t readBytes = TIFFReadTile(tiff, block.data(),
-						static_cast<uint32_t>(blockLeftColumn), static_cast<uint32_t>(blockTopRow), 0, 0);
+					// libtiff finds the chunk that holds this cell and unzips it into the buffer
+					tmsize_t readBytes = TIFFReadTile(tiff, chunk.data(),
+						static_cast<uint32_t>(chunkLeftColumn), static_cast<uint32_t>(chunkTopRow), 0, 0);
 					if (readBytes < 0)
 					{
 						return false;
 					}
 
-					copyBlockIntoGrid(block, blockTopRow, blockLeftColumn, layout, heights);
+					copyChunkIntoGrid(chunk, chunkTopRow, chunkLeftColumn, layout, heights);
 				}
 			}
 			return true;
+		}
+
+		void buildBlockMaxTable(Models::HeightTileHeader& tileHeader)
+		{
+			//the size of the block table
+			size_t numBlocksRows = (tileHeader.numCellsRows + BLOCK_SIZE - 1) / BLOCK_SIZE;
+			size_t numBlockCols = (tileHeader.numCellsColumns + BLOCK_SIZE - 1) / BLOCK_SIZE;
+			tileHeader.numBlocksRows = numBlocksRows;
+			tileHeader.numBlocksColumns = numBlockCols;
+
+			//resize the block to the tiles size, init the lowest number in it 
+			tileHeader.blockMaxHeights.assign(numBlocksRows * numBlockCols, std::numeric_limits<float>::lowest());
+
+			for (size_t row = 0; row < tileHeader.numCellsRows; row++)
+			{
+				for (size_t colum = 0; colum < tileHeader.numCellsColumns; colum++)
+				{
+					float height = tileHeader.heightData[row * tileHeader.numCellsColumns + colum];
+					size_t blockRow = row / BLOCK_SIZE;
+					size_t blockCol = colum / BLOCK_SIZE;
+					size_t indexInTable = blockRow * numBlockCols + blockCol;
+
+					if (tileHeader.blockMaxHeights[indexInTable] < height)
+					{
+						tileHeader.blockMaxHeights[indexInTable] = height;
+					}
+				}
+			}
 		}
 	}
 
@@ -171,7 +201,7 @@ namespace Terrain
 		{
 			return nullopt;
 		}
-
+		buildBlockMaxTable(tileHeader);
 		return tileHeader;
 	}
 

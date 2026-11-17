@@ -92,12 +92,15 @@ namespace Constants
         inline constexpr uint16_t HEIGHT_BITS_PER_SAMPLE = 32;
 
         // one environment variable per DSM tile, each holding the full path of its .tif file
-        // (kept out of the code because the paths are different on every machine - set them in .env)
+        //kept out of the code because the paths are different on every machine.
         inline constexpr const char* TILE_PATH_ENV_VARS[] =
         {
             "RAVEN_DSM_TILE_CHEYENNE",
             "RAVEN_DSM_TILE_FLORIDA",
             "RAVEN_DSM_TILE_NORTH_CAROLINA",
         };
+
+        //cells per block, each block keeps its max height so a ray can skip it
+        inline constexpr uint16_t BLOCK_SIZE = 60;
     }
 }
