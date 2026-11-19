@@ -150,12 +150,15 @@
     <ClCompile Include="Network\TcpSocketReceiver.cpp" />
     <ClCompile Include="Math\GeoCalculator.cpp" />
     <ClCompile Include="Math\GeoConversions.cpp" />
+    <ClCompile Include="RayMarching\CellRayMarcher.cpp" />
     <ClCompile Include="Terrain\GeoTiffHeightProvider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\..\..\Downloads\json.hpp" />
     <ClInclude Include="Common\Constants.hpp" />
     <ClInclude Include="Common\DotEnv.hpp" />
+    <ClInclude Include="RayMarching\CellRayMarcher.hpp" />
+    <ClInclude Include="RayMarching\IRayMarching.hpp" />
     <ClInclude Include="Terrain\GeoTiffHeightProvider.hpp" />
     <ClInclude Include="Models\HeightTileHeader.hpp" />
     <ClInclude Include="Terrain\IHeightProvider.hpp" />
