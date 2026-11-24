@@ -10,12 +10,6 @@ using RavenMaths::Vector3D;
 
 namespace Math 
 {
-    // a reference member can only be bound here, in the initializer list - never assigned in the body
-    GeoCalculator::GeoCalculator(const IHeightProvider& heightProvider)
-        : _heightProvider(heightProvider)
-    {
-    }
-
     Models::Ray GeoCalculator::calculateRay(const Models::TelemetryFrame& frame) 
     {
         Models::Ray ray;
@@ -34,7 +28,8 @@ namespace Math
             frame.sensorLongitude.value(),
             frame.sensorAltitudeMeters.value()
         );
-        spdlog::info(Constants::Logs::CALC_RAY, ray.origin.toString(), ray.direction.toString());
+        spdlog::info(Constants::Logs::CALC_RAY, ray.origin.getX(), ray.origin.getY(), ray.origin.getZ(),
+            ray.direction.getX(), ray.direction.getY(), ray.direction.getZ());
         return ray;
     }
 

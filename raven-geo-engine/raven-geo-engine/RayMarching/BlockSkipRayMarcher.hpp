@@ -10,11 +10,11 @@ using Terrain::IHeightProvider;
 
 namespace RayMarching
 {
-	class CellRayMarcher : public IRayMarching
+	class BlockSkipRayMarcher : public IRayMarching
 	{
 	public:
-		explicit CellRayMarcher(const IHeightProvider& heightProvider);
-		~CellRayMarcher() override = default;
+		explicit BlockSkipRayMarcher(const IHeightProvider& heightProvider);
+		~BlockSkipRayMarcher() override = default;
 		RayHitResult getFirstHit(const Ray& ray) const override;
 
 	private:

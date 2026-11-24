@@ -63,7 +63,7 @@
     <ClCompile Include="Terrain\GeoTiffHeightProvider.cpp">
       <Filter>Source Files\Terrain</Filter>
     </ClCompile>
-    <ClCompile Include="RayMarching\CellRayMarcher.cpp">
+    <ClCompile Include="RayMarching\BlockSkipRayMarcher.cpp">
       <Filter>Source Files\RayMarching</Filter>
     </ClCompile>
   </ItemGroup>
@@ -125,7 +125,7 @@
     <ClInclude Include="RayMarching\IRayMarching.hpp">
       <Filter>Header Files\RayMarching</Filter>
     </ClInclude>
-    <ClInclude Include="RayMarching\CellRayMarcher.hpp">
+    <ClInclude Include="RayMarching\BlockSkipRayMarcher.hpp">
       <Filter>Header Files\RayMarching</Filter>
     </ClInclude>
   </ItemGroup>

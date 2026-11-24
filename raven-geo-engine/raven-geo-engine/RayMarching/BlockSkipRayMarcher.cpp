@@ -1,4 +1,4 @@
-#include "CellRayMarcher.hpp"
+#include "BlockSkipRayMarcher.hpp"
 #include "../Math/GeoConversions.hpp"
 #include "../Common/Constants.hpp"
 #include "../Models/GroundIntersection.hpp"
@@ -11,10 +11,10 @@ using Models::TerrainBlock;
 
 namespace RayMarching
 {
-	CellRayMarcher::CellRayMarcher(const IHeightProvider& heightProvider): 
+	BlockSkipRayMarcher::BlockSkipRayMarcher(const IHeightProvider& heightProvider): 
 		_heightProvider(heightProvider){}
 	
-	RayHitResult CellRayMarcher::getFirstHit(const Ray& ray) const
+	RayHitResult BlockSkipRayMarcher::getFirstHit(const Ray& ray) const
 	{
 		RayHitResult result;
 		//first step: check if the eay is pointing downwards, if not return miss
@@ -35,7 +35,6 @@ namespace RayMarching
 		{
 			if (t > Constants::RayMarching::MAX_RAY_DISTANCE_METERS)
 			{
-				spdlog::info(Constants::Logs::RAY_MARCH_MISS, Constants::RayMarching::MAX_RAY_DISTANCE_METERS);
 				result.hitStatus = RayHitStatus::Miss;
 				return result;
 			}
@@ -83,7 +82,7 @@ namespace RayMarching
 		return result;
 	}
 
-	double CellRayMarcher::metersToExit(const Bounds& bounds, const Ray& ray, const Math::DegreesOffset& degreesPerMeter) const
+	double BlockSkipRayMarcher::metersToExit(const Bounds& bounds, const Ray& ray, const Math::DegreesOffset& degreesPerMeter) const
 	{
 		//third step : which wall the ray faces
 		bool goingNorth = ray.direction.getX() > 0;
@@ -120,7 +119,7 @@ namespace RayMarching
 		return std::min(metersToNorthSouthWall, metersToEastWestWall);
 	}
 
-	optional<double> CellRayMarcher::metersToCellHit(const TerrainCell& cell, const Ray& ray, const double tEntry, const double tExit) const
+	optional<double> BlockSkipRayMarcher::metersToCellHit(const TerrainCell& cell, const Ray& ray, const double tEntry, const double tExit) const
 	{
 		//first case: the ray hit the cell like a big wall, when high at tEntry is lower than the cell height
 		double entryHeight = ray.origin.getZ() - tEntry * ray.direction.getZ();
@@ -140,7 +139,7 @@ namespace RayMarching
 		return std::nullopt;
 	}
 
-	optional<double> CellRayMarcher::metersToBlockSkip(const double latitude, const double longitude, const Ray& ray, const Math::DegreesOffset& degreesPerMeter) const
+	optional<double> BlockSkipRayMarcher::metersToBlockSkip(const double latitude, const double longitude, const Ray& ray, const Math::DegreesOffset& degreesPerMeter) const
 	{
 		optional<TerrainBlock> block = this->_heightProvider.getBlockAt(latitude,longitude);
 		if (!block)

@@ -22,16 +22,15 @@ namespace Constants
         inline constexpr char CONNECTION_LOST[] = "Connection lost with LTS. Attempting to reconnect...";
         inline constexpr char PARSE_ERROR[] = "Failed to parse telemetry JSON: {}";
         inline constexpr char RUNNING_WAITING[] = "Running... Press ENTER to exit.";
-        inline constexpr char CALC_RAY[] = "Ray: from drone (lat, lon, alt m) {}, direction (north, east, down) {}";
+        inline constexpr char CALC_RAY[] = "  drone    {:.6f}, {:.6f} | alt {:.1f} m | looking N {:+.3f} E {:+.3f} D {:+.3f}";
 		inline constexpr char CALC_Z_POINT_WARNING[] = "The ray is pointing upwards / above the horizon (negative z direction): Ray: {}";
 		inline constexpr char DRONE_BELOW_GROUND_WARNING[] = "The drone is below the ground level. Drone altitude: {:.2f} m, ground altitude: {:.2f} m";
-		inline constexpr char CALC_GROUND_INTERSECTION_ERROR[] = "Hit point: ({:.6f}, {:.6f}), slant range: {:.2f} m, error vs frame center: {:.2f} m";
-		inline constexpr char CALC_GROUND_INTERSECTION[] = "Hit point: ({:.6f}, {:.6f}), slant range: {:.2f} m";
-		inline constexpr char RAY_FIELDS_MISSING[] = "Missing telemetry fields: [{}], frame skipped.";
+		inline constexpr char CALC_GROUND_INTERSECTION_ERROR[] = "  HIT      {:.6f}, {:.6f} | ground {:.1f} m | range {:.0f} m | {:.1f} m from frame center";
+		inline constexpr char CALC_GROUND_INTERSECTION[] = "  HIT      {:.6f}, {:.6f} | ground {:.1f} m | range {:.0f} m";
+		inline constexpr char RAY_FIELDS_MISSING[] = "  SKIPPED  missing telemetry fields: [{}]";
 		inline constexpr char FRAME_CENTER_ELEVATION_MISSING[] = "No ground height, frame skipped.";  
-		inline constexpr char FRAME_CENTER_LATITUDE_AND_LONGITUDE_MISSING[] = "Frame center latitude and longitude are missing in the telemetry frame can't calculate the error.";
-		inline constexpr char START_CALC[] = "=====================Calculation for telemetry frame=====================";
-		inline constexpr char CALCULATION_COMPLETE[] = "=====================Calculation complete=====================\n\n";
+		inline constexpr char FRAME_CENTER_LATITUDE_AND_LONGITUDE_MISSING[] = "  (no frame center in the telemetry - can't measure the error)";
+		inline constexpr char START_CALC[] = "----- frame {} -----";
 		inline constexpr char TILE_LOADED[] = "Loaded terrain tile: {}";
 		inline constexpr char TILE_LOAD_FAILED[] = "Failed to load terrain tile: {}, skipped.";
 		inline constexpr char TILES_LOADED_SUMMARY[] = "Loaded {} of {} terrain tiles.";
@@ -42,10 +41,9 @@ namespace Constants
 		inline constexpr char DSM_NO_TILE_AT_FRAME_CENTER[] = "No terrain tile covers frame center ({:.6f}, {:.6f}).";
 		inline constexpr char DSM_VS_FRAME_CENTER_ELEVATION[] = "Ground height at frame center: telemetry {:.2f} m, DSM {:.2f} m, diff {:+.2f} m";
 		inline constexpr char DSM_AT_FRAME_CENTER_NO_ELEVATION[] = "DSM at frame center: {:.2f} m (no frame center elevation to compare).";
-		inline constexpr char RAY_MARCH_STUCK[] = "Ray march stuck: cell exit {:.3f} m is not past the current distance {:.3f} m - giving up as a miss.";
-		inline constexpr char RAY_MARCH_HIT[] = "Ray hit terrain: ({:.6f}, {:.6f}), altitude {:.2f} m, slant range {:.2f} m";
-		inline constexpr char RAY_MARCH_MISS[] = "Ray missed the terrain within {:.0f} m.";
-		inline constexpr char RAY_MARCH_NO_TERRAIN_DATA[] = "Ray left the loaded terrain tiles before hitting the ground.";
+		inline constexpr char RAY_MARCH_STUCK[] = "  ray march stuck: cell exit {:.3f} m is not past the current distance {:.3f} m - giving up as a miss";
+		inline constexpr char RAY_MARCH_MISS[] = "  MISS     the ray points up or stays above the terrain for {:.0f} m";
+		inline constexpr char RAY_MARCH_NO_TERRAIN_DATA[] = "  NO DATA  the ray left the loaded DSM tiles before reaching the ground";
     }
 
     namespace TelemetryJsonKeys 

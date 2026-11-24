@@ -11,9 +11,14 @@
 #include "Math/GeoCalculator.hpp"
 #include "Terrain/GeoTiffHeightProvider.hpp"
 #include "Models/TerrainCell.hpp"
+#include "RayMarching/BlockSkipRayMarcher.hpp"
 
+using RayMarching::BlockSkipRayMarcher;
+using RayMarching::IRayMarching;
 using Terrain::GeoTiffHeightProvider;
 using Models::TerrainCell;
+using Models::RayHitResult;
+using Models::RayHitStatus;
 using std::nullopt;
 
 namespace
@@ -67,12 +72,12 @@ namespace
 				hitPoint.latitude, hitPoint.longitude, frame.frameCenterLatitude.value(), frame.frameCenterLongitude.value());
 
 			spdlog::info(Constants::Logs::CALC_GROUND_INTERSECTION_ERROR,
-				hitPoint.latitude, hitPoint.longitude, hitPoint.slantRangeMeters, errorMeters);
+				hitPoint.latitude, hitPoint.longitude, hitPoint.altitudeMeters, hitPoint.slantRangeMeters, errorMeters);
 		}
 		else
 		{
 			spdlog::info(Constants::Logs::CALC_GROUND_INTERSECTION,
-				hitPoint.latitude, hitPoint.longitude, hitPoint.slantRangeMeters);
+				hitPoint.latitude, hitPoint.longitude, hitPoint.altitudeMeters, hitPoint.slantRangeMeters);
 			spdlog::warn(Constants::Logs::FRAME_CENTER_LATITUDE_AND_LONGITUDE_MISSING);
 		}
 	}
@@ -82,18 +87,24 @@ int main()
 {
     spdlog::info(Constants::Logs::ENGINE_STARTING);
 
-    // first, so every setting below (like the tiles folder) can come from the .env file
+    // first, so every setting can come from the .env file
     Common::loadDotEnv(Constants::DotEnv::FILE_NAME);
 
     // load every terrain tile once, before any frame arrives.
     // created first so it outlives the calculator that borrows it
     GeoTiffHeightProvider heightProvider(readTilePaths());
-    auto calculator = std::make_shared<Math::GeoCalculator>(heightProvider);
+
+	BlockSkipRayMarcher rayMarcher(heightProvider);
+
+    auto calculator = std::make_shared<Math::GeoCalculator>();
     Network::TcpSocketReceiver receiver(Constants::Network::DEFAULT_HOST, Constants::Network::LTS_SOCKET_PORT);
 
-    receiver.start([&calculator, &heightProvider](const Models::TelemetryFrame& frame)
+    // counts the frames so each block of log lines can be told apart
+    std::uint64_t frameNumber = 0;
+
+    receiver.start([&calculator, &heightProvider, &rayMarcher, &frameNumber](const Models::TelemetryFrame& frame)
     {
-		spdlog::info(Constants::Logs::START_CALC);
+		spdlog::info(Constants::Logs::START_CALC, ++frameNumber);
 
 		// a missing ray input would silently become a wrong ray, so skip the frame
         std::vector<std::string> missingFields = calculator->findMissingRayFields(frame);
@@ -103,29 +114,27 @@ int main()
             return;
         }
 
-        logDsmVsFrameCenter(frame, heightProvider);
-
 		// Calculate the ray from the telemetry frame
         Models::Ray ray = calculator->calculateRay(frame);
 
-		//if we dont get any frame center elevation, we will log a warning
-        if(frame.frameCenterElevation == std::nullopt)
-        {
-            spdlog::warn(Constants::Logs::FRAME_CENTER_ELEVATION_MISSING);
-            return;
-        }
 
 		// Calculate the ground intersection point from the ray and the ground
-		std::optional<Models::GroundIntersection> hitPoint =
-            calculator->castRayToFlatGround(ray, frame.frameCenterElevation.value());
+		
+		RayHitResult hitPoint = rayMarcher.getFirstHit(ray);
+		switch (hitPoint.hitStatus)
+		{
+		case RayHitStatus::Hit:
+			logHitPoint(frame, hitPoint.intersectionPoint.value(), *calculator);
+			break;
+		case RayHitStatus::Miss:
+			spdlog::info(Constants::Logs::RAY_MARCH_MISS, Constants::RayMarching::MAX_RAY_DISTANCE_METERS);
+			break;
+		case RayHitStatus::NoTerrainData:
+			spdlog::warn(Constants::Logs::RAY_MARCH_NO_TERRAIN_DATA);
+			break;
+		}
 
-        if (hitPoint == std::nullopt)
-        {
-            return;
-        }
-
-        logHitPoint(frame, *hitPoint, *calculator);
-        spdlog::info(Constants::Logs::CALCULATION_COMPLETE);
+        
     });
 
     spdlog::info(Constants::Logs::RUNNING_WAITING);
