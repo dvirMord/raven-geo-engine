@@ -102,8 +102,8 @@ namespace Constants
             "RAVEN_DSM_TILE_NORTH_CAROLINA",
         };
 
-        //cells per block each block keeps its max height so a ray can skip it
-        inline constexpr uint16_t BLOCK_SIZE = 60;
+        // cells per block - each block keeps its max height so a ray can skip it. 16 measured fastest on real flights (rays cross ~100-200 cells, best block is about the square root of that); 60 was 2x slower
+        inline constexpr uint16_t BLOCK_SIZE = 16;
     }
 
     namespace RayMarching
