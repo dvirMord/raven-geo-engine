@@ -7,6 +7,7 @@
 #include <algorithm>
 
 using Models::GroundIntersection;
+using Models::TerrainBlock;
 
 namespace RayMarching
 {
@@ -32,8 +33,22 @@ namespace RayMarching
 		
 		do
 		{
+			if (t > Constants::RayMarching::MAX_RAY_DISTANCE_METERS)
+			{
+				spdlog::info(Constants::Logs::RAY_MARCH_MISS, Constants::RayMarching::MAX_RAY_DISTANCE_METERS);
+				result.hitStatus = RayHitStatus::Miss;
+				return result;
+			}
 			double raylat = ray.origin.getX() +	(t + Constants::RayMarching::NEXT_CELL_NUDGE_METERS) * degreesPerMeter.latitudeDegrees;
 			double raylon = ray.origin.getY() + (t + Constants::RayMarching::NEXT_CELL_NUDGE_METERS) * degreesPerMeter.longitudeDegrees;
+			
+			optional<double> skipTo = metersToBlockSkip(raylat, raylon, ray, degreesPerMeter);
+			if (skipTo)
+			{
+				t = skipTo.value();
+				continue;
+			}
+			
 			//the current cell in the loop
 			optional<TerrainCell> cell = this->_heightProvider.getCellAt(raylat, raylon);
 			if (cell == std::nullopt)
@@ -42,7 +57,7 @@ namespace RayMarching
 				return result;
 			}
 
-			double tExit = this->metersToCellExit(cell.value(), ray, degreesPerMeter);
+			double tExit = this->metersToExit(cell.value().bounds, ray, degreesPerMeter);
 
 			if (t >= tExit)
 			{
@@ -61,13 +76,6 @@ namespace RayMarching
 				break;
 			}
 			t = tExit;
-			
-			if (t > Constants::RayMarching::MAX_RAY_DISTANCE_METERS)
-			{
-				spdlog::info(Constants::Logs::RAY_MARCH_MISS, Constants::RayMarching::MAX_RAY_DISTANCE_METERS);
-				result.hitStatus = RayHitStatus::Miss;
-				return result;
-			}
 		} while (!hit);
 
 		result.hitStatus = RayHitStatus::Hit;
@@ -75,41 +83,41 @@ namespace RayMarching
 		return result;
 	}
 
-	double CellRayMarcher::metersToCellExit(const TerrainCell& cell, const Ray& ray, const Math::DegreesOffset& degreesPerMeter) const
+	double CellRayMarcher::metersToExit(const Bounds& bounds, const Ray& ray, const Math::DegreesOffset& degreesPerMeter) const
 	{
 		//third step : which wall the ray faces
 		bool goingNorth = ray.direction.getX() > 0;
 		bool goingEast = ray.direction.getY() > 0;
 
-		double metersToNextCellNorth = std::numeric_limits<double>::infinity();
-		double metersToNextCellEast = std::numeric_limits<double>::infinity();
+		double metersToNorthSouthWall = std::numeric_limits<double>::infinity();
+		double metersToEastWestWall = std::numeric_limits<double>::infinity();
 		if (degreesPerMeter.latitudeDegrees != 0)
 		{
 			if (goingNorth)
 			{
-				double degreesToWall = cell.bounds.northLatitudeDegrees - ray.origin.getX();
-				metersToNextCellNorth = degreesToWall / degreesPerMeter.latitudeDegrees;
+				double degreesToWall = bounds.northLatitudeDegrees - ray.origin.getX();
+				metersToNorthSouthWall = degreesToWall / degreesPerMeter.latitudeDegrees;
 			}
 			else
 			{
-				double degreesToWall = cell.bounds.southLatitudeDegrees - ray.origin.getX();
-				metersToNextCellNorth = degreesToWall / degreesPerMeter.latitudeDegrees;
+				double degreesToWall = bounds.southLatitudeDegrees - ray.origin.getX();
+				metersToNorthSouthWall = degreesToWall / degreesPerMeter.latitudeDegrees;
 			}
 		}
 		if (degreesPerMeter.longitudeDegrees != 0)
 		{
 			if (goingEast)
 			{
-				double degreesToWall = cell.bounds.eastLongitudeDegrees - ray.origin.getY();
-				metersToNextCellEast = degreesToWall / degreesPerMeter.longitudeDegrees;
+				double degreesToWall = bounds.eastLongitudeDegrees - ray.origin.getY();
+				metersToEastWestWall = degreesToWall / degreesPerMeter.longitudeDegrees;
 			}
 			else
 			{
-				double degreesToWall = cell.bounds.westLongitudeDegrees - ray.origin.getY();
-				metersToNextCellEast = degreesToWall / degreesPerMeter.longitudeDegrees;
+				double degreesToWall =	bounds.westLongitudeDegrees - ray.origin.getY();
+				metersToEastWestWall = degreesToWall / degreesPerMeter.longitudeDegrees;
 			}
 		}
-		return std::min(metersToNextCellNorth, metersToNextCellEast);
+		return std::min(metersToNorthSouthWall, metersToEastWestWall);
 	}
 
 	optional<double> CellRayMarcher::metersToCellHit(const TerrainCell& cell, const Ray& ray, const double tEntry, const double tExit) const
@@ -132,4 +140,21 @@ namespace RayMarching
 		return std::nullopt;
 	}
 
+	optional<double> CellRayMarcher::metersToBlockSkip(const double latitude, const double longitude, const Ray& ray, const Math::DegreesOffset& degreesPerMeter) const
+	{
+		optional<TerrainBlock> block = this->_heightProvider.getBlockAt(latitude,longitude);
+		if (!block)
+		{
+			// no block here means no tile - can't skip, and the cell lookup right after returns NoTerrainData
+			return std::nullopt; 
+		}
+		double blockExit = this->metersToExit(block.value().bounds, ray, degreesPerMeter);
+
+		double exitHeight = ray.origin.getZ() - blockExit * ray.direction.getZ();
+		if (exitHeight > block.value().maxHeightMeters)
+		{
+			return blockExit;
+		}
+		return std::nullopt;
+	}
 }
