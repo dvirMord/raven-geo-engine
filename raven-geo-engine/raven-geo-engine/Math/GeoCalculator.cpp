@@ -2,9 +2,7 @@
 #include "GeoConversions.hpp"
 #include <cmath>
 #include <spdlog/spdlog.h>
-#include <numbers>
 
-using std::numbers::pi;
 using RavenMaths::Matrix3x3;
 using RavenMaths::Vector3D;
 
@@ -49,14 +47,6 @@ namespace Math
         return missingFields;
     }
 
-	double GeoCalculator::toRadians(const double degrees)
-	{
-		return degrees * (pi / Constants::Math::SEMICIRCLE_DEGREES);
-	}
-	double GeoCalculator::toDegrees(const double radians)
-	{
-		return radians * (Constants::Math::SEMICIRCLE_DEGREES / pi);
-	}
 
     Matrix3x3 GeoCalculator::buildGimbalRotation(double panDeg, double tiltDeg)
     {

@@ -205,40 +205,7 @@ namespace Terrain
 		return tileHeader;
 	}
 
-	optional<TerrainCell> GeoTiffHeightProvider::getCellAt(const double latitude, const double longitude) const
-	{
-		for (const auto& tile : this->_tiles)
-		{
-			double latitudeInrow = (tile.northWestCorner.latitudeDegrees - latitude) / tile.sizeOfCellLatDegrees;
-			double longitudeIncolumn = (longitude - tile.northWestCorner.longitudeDegrees) / tile.sizeOfCellLonDegrees;
-
-			if (latitudeInrow < 0 || longitudeIncolumn < 0)
-			{
-				continue; // the point is north or west of the tile
-			}
-
-			size_t row = static_cast<size_t>(latitudeInrow);
-			size_t col = static_cast<size_t>(longitudeIncolumn);	
-
-			if(row >= tile.numCellsRows || col >= tile.numCellsColumns)
-			{
-				continue; // the point is south or east of the tile
-			}
-
-			double height = tile.heightData[row * tile.numCellsColumns + col];
-			TerrainCell cell;
-			cell.heightMeters = height;
-			// rows go south from the corner (latitude shrinks), columns go east (longitude grows)
-			cell.bounds.northLatitudeDegrees = tile.northWestCorner.latitudeDegrees - (tile.sizeOfCellLatDegrees * row);
-			cell.bounds.southLatitudeDegrees = cell.bounds.northLatitudeDegrees - tile.sizeOfCellLatDegrees;
-			cell.bounds.westLongitudeDegrees = tile.northWestCorner.longitudeDegrees + (tile.sizeOfCellLonDegrees * col);
-			cell.bounds.eastLongitudeDegrees = cell.bounds.westLongitudeDegrees + tile.sizeOfCellLonDegrees;
-			return cell;
-		}
-		return nullopt; // no tile covers the point
-	}
-
-	optional<TerrainBlock> GeoTiffHeightProvider::getBlockAt(const double latitude, const double longitude) const
+	optional<GeoTiffHeightProvider::CellLocation> GeoTiffHeightProvider::findCell(const double latitude, const double longitude) const
 	{
 		for (const auto& tile : this->_tiles)
 		{
@@ -258,21 +225,52 @@ namespace Terrain
 				continue; // the point is south or east of the tile
 			}
 
-			size_t blockRow = row / BLOCK_SIZE;
-			size_t blockCol = col / BLOCK_SIZE;
-
-			float maxHeight = tile.blockMaxHeights[blockRow * tile.numBlocksColumns + blockCol];
-			double blockLatSize = tile.sizeOfCellLatDegrees * BLOCK_SIZE;
-			double blockLonSize = tile.sizeOfCellLonDegrees * BLOCK_SIZE;
-			TerrainBlock block;
-			block.maxHeightMeters = maxHeight;
-			// rows go south from the corner (latitude shrinks), columns go east (longitude grows)
-			block.bounds.northLatitudeDegrees = tile.northWestCorner.latitudeDegrees - (blockLatSize * blockRow);
-			block.bounds.southLatitudeDegrees = block.bounds.northLatitudeDegrees - blockLatSize;
-			block.bounds.westLongitudeDegrees = tile.northWestCorner.longitudeDegrees + (blockLonSize * blockCol);
-			block.bounds.eastLongitudeDegrees = block.bounds.westLongitudeDegrees + blockLonSize;
-			return block;
+			return CellLocation{ &tile, row, col };
 		}
 		return nullopt; // no tile covers the point
+	}
+
+	optional<TerrainCell> GeoTiffHeightProvider::getCellAt(const double latitude, const double longitude) const
+	{
+		optional<CellLocation> location = this->findCell(latitude, longitude);
+		if (!location)
+		{
+			return nullopt;
+		}
+		const Models::HeightTileHeader& tile = *location->tile;
+		size_t row = location->row;
+		size_t col = location->col;
+
+		TerrainCell cell;
+		cell.heightMeters = tile.heightData[row * tile.numCellsColumns + col];
+		// rows go south from the corner (latitude shrinks), columns go east (longitude grows)
+		cell.bounds.northLatitudeDegrees = tile.northWestCorner.latitudeDegrees - (tile.sizeOfCellLatDegrees * row);
+		cell.bounds.southLatitudeDegrees = cell.bounds.northLatitudeDegrees - tile.sizeOfCellLatDegrees;
+		cell.bounds.westLongitudeDegrees = tile.northWestCorner.longitudeDegrees + (tile.sizeOfCellLonDegrees * col);
+		cell.bounds.eastLongitudeDegrees = cell.bounds.westLongitudeDegrees + tile.sizeOfCellLonDegrees;
+		return cell;
+	}
+
+	optional<TerrainBlock> GeoTiffHeightProvider::getBlockAt(const double latitude, const double longitude) const
+	{
+		optional<CellLocation> location = this->findCell(latitude, longitude);
+		if (!location)
+		{
+			return nullopt;
+		}
+		const Models::HeightTileHeader& tile = *location->tile;
+		size_t blockRow = location->row / BLOCK_SIZE;
+		size_t blockCol = location->col / BLOCK_SIZE;
+
+		double blockLatSize = tile.sizeOfCellLatDegrees * BLOCK_SIZE;
+		double blockLonSize = tile.sizeOfCellLonDegrees * BLOCK_SIZE;
+		TerrainBlock block;
+		block.maxHeightMeters = tile.blockMaxHeights[blockRow * tile.numBlocksColumns + blockCol];
+		// rows go south from the corner (latitude shrinks), columns go east (longitude grows)
+		block.bounds.northLatitudeDegrees = tile.northWestCorner.latitudeDegrees - (blockLatSize * blockRow);
+		block.bounds.southLatitudeDegrees = block.bounds.northLatitudeDegrees - blockLatSize;
+		block.bounds.westLongitudeDegrees = tile.northWestCorner.longitudeDegrees + (blockLonSize * blockCol);
+		block.bounds.eastLongitudeDegrees = block.bounds.westLongitudeDegrees + blockLonSize;
+		return block;
 	}
 }

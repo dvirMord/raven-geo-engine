@@ -10,13 +10,11 @@
 #include "Network/TcpSocketReceiver.hpp"
 #include "Math/GeoCalculator.hpp"
 #include "Terrain/GeoTiffHeightProvider.hpp"
-#include "Models/TerrainCell.hpp"
 #include "RayMarching/BlockSkipRayMarcher.hpp"
 
 using RayMarching::BlockSkipRayMarcher;
 using RayMarching::IRayMarching;
 using Terrain::GeoTiffHeightProvider;
-using Models::TerrainCell;
 using Models::RayHitResult;
 using Models::RayHitStatus;
 using std::nullopt;
@@ -39,29 +37,6 @@ namespace
 		return tilePaths;
 	}
 
-	// compare the DSM height at the frame center with the telemetry's own frame center elevation (log only)
-	void logDsmVsFrameCenter(const Models::TelemetryFrame& frame, const Terrain::IHeightProvider& heightProvider)
-	{
-		if (frame.frameCenterLatitude == nullopt || frame.frameCenterLongitude == nullopt)
-		{
-			return;
-		}
-
-		std::optional<TerrainCell> dsmCell = heightProvider.getCellAt(frame.frameCenterLatitude.value(), frame.frameCenterLongitude.value());
-		if (dsmCell == nullopt)
-		{
-			spdlog::warn(Constants::Logs::DSM_NO_TILE_AT_FRAME_CENTER, frame.frameCenterLatitude.value(), frame.frameCenterLongitude.value());
-		}
-		else if (frame.frameCenterElevation != nullopt)
-		{
-			double diff = frame.frameCenterElevation.value() - dsmCell.value().heightMeters;
-			spdlog::info(Constants::Logs::DSM_VS_FRAME_CENTER_ELEVATION, frame.frameCenterElevation.value(), dsmCell.value().heightMeters, diff);
-		}
-		else
-		{
-			spdlog::info(Constants::Logs::DSM_AT_FRAME_CENTER_NO_ELEVATION, dsmCell.value().heightMeters);
-		}
-	}
 
 	// log where the ray hit and, when the frame center is known, how far the hit is from it
 	void logHitPoint(const Models::TelemetryFrame& frame, const Models::GroundIntersection& hitPoint, Math::GeoCalculator& calculator)
@@ -102,7 +77,7 @@ int main()
     // counts the frames so each block of log lines can be told apart
     std::uint64_t frameNumber = 0;
 
-    receiver.start([&calculator, &heightProvider, &rayMarcher, &frameNumber](const Models::TelemetryFrame& frame)
+    receiver.start([&calculator, &rayMarcher, &frameNumber](const Models::TelemetryFrame& frame)
     {
 		spdlog::info(Constants::Logs::START_CALC, ++frameNumber);
 

@@ -17,7 +17,7 @@ namespace RayMarching
 	RayHitResult BlockSkipRayMarcher::getFirstHit(const Ray& ray) const
 	{
 		RayHitResult result;
-		//first step: check if the eay is pointing downwards, if not return miss
+		//first step: check if the ray is pointing downwards, if not return miss
 		if (ray.direction.getZ() <= 0)
 		{
 			result.hitStatus = RayHitStatus::Miss;
@@ -135,7 +135,7 @@ namespace RayMarching
 			return tEntry + (entryHeight - cell.heightMeters) / ray.direction.getZ();
 		}
 
-		//third case: the ray passsed the cell without hitting it
+		//third case: the ray passed the cell without hitting it
 		return std::nullopt;
 	}
 

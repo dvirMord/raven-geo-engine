@@ -28,7 +28,6 @@ namespace Constants
 		inline constexpr char CALC_GROUND_INTERSECTION_ERROR[] = "  HIT      {:.6f}, {:.6f} | ground {:.1f} m | range {:.0f} m | {:.1f} m from frame center";
 		inline constexpr char CALC_GROUND_INTERSECTION[] = "  HIT      {:.6f}, {:.6f} | ground {:.1f} m | range {:.0f} m";
 		inline constexpr char RAY_FIELDS_MISSING[] = "  SKIPPED  missing telemetry fields: [{}]";
-		inline constexpr char FRAME_CENTER_ELEVATION_MISSING[] = "No ground height, frame skipped.";  
 		inline constexpr char FRAME_CENTER_LATITUDE_AND_LONGITUDE_MISSING[] = "  (no frame center in the telemetry - can't measure the error)";
 		inline constexpr char START_CALC[] = "----- frame {} -----";
 		inline constexpr char TILE_LOADED[] = "Loaded terrain tile: {}";
@@ -38,9 +37,6 @@ namespace Constants
 		inline constexpr char TILE_PATH_ENV_MISSING[] = "Environment variable {} is not set - that tile is skipped.";
 		inline constexpr char DOTENV_LOADED[] = "Loaded settings from {}";
 		inline constexpr char DOTENV_NOT_FOUND[] = "No {} file in the working folder - using the system environment only.";
-		inline constexpr char DSM_NO_TILE_AT_FRAME_CENTER[] = "No terrain tile covers frame center ({:.6f}, {:.6f}).";
-		inline constexpr char DSM_VS_FRAME_CENTER_ELEVATION[] = "Ground height at frame center: telemetry {:.2f} m, DSM {:.2f} m, diff {:+.2f} m";
-		inline constexpr char DSM_AT_FRAME_CENTER_NO_ELEVATION[] = "DSM at frame center: {:.2f} m (no frame center elevation to compare).";
 		inline constexpr char RAY_MARCH_STUCK[] = "  ray march stuck: cell exit {:.3f} m is not past the current distance {:.3f} m - giving up as a miss";
 		inline constexpr char RAY_MARCH_MISS[] = "  MISS     the ray points up or stays above the terrain for {:.0f} m";
 		inline constexpr char RAY_MARCH_NO_TERRAIN_DATA[] = "  NO DATA  the ray left the loaded DSM tiles before reaching the ground";
