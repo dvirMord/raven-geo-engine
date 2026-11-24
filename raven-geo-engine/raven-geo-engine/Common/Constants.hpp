@@ -42,6 +42,10 @@ namespace Constants
 		inline constexpr char DSM_NO_TILE_AT_FRAME_CENTER[] = "No terrain tile covers frame center ({:.6f}, {:.6f}).";
 		inline constexpr char DSM_VS_FRAME_CENTER_ELEVATION[] = "Ground height at frame center: telemetry {:.2f} m, DSM {:.2f} m, diff {:+.2f} m";
 		inline constexpr char DSM_AT_FRAME_CENTER_NO_ELEVATION[] = "DSM at frame center: {:.2f} m (no frame center elevation to compare).";
+		inline constexpr char RAY_MARCH_STUCK[] = "Ray march stuck: cell exit {:.3f} m is not past the current distance {:.3f} m - giving up as a miss.";
+		inline constexpr char RAY_MARCH_HIT[] = "Ray hit terrain: ({:.6f}, {:.6f}), altitude {:.2f} m, slant range {:.2f} m";
+		inline constexpr char RAY_MARCH_MISS[] = "Ray missed the terrain within {:.0f} m.";
+		inline constexpr char RAY_MARCH_NO_TERRAIN_DATA[] = "Ray left the loaded terrain tiles before hitting the ground.";
     }
 
     namespace TelemetryJsonKeys 
@@ -102,5 +106,14 @@ namespace Constants
 
         //cells per block each block keeps its max height so a ray can skip it
         inline constexpr uint16_t BLOCK_SIZE = 60;
+    }
+
+    namespace RayMarching
+    {
+        // the ray gives up after this many meters - past it earth curvature (~8 m at 10 km) makes the flat model wrong
+        inline constexpr double MAX_RAY_DISTANCE_METERS = 10000.0;
+
+        // how far past a cell's exit to look up the next cell - a point exactly on the border can return the same cell again
+        inline constexpr double NEXT_CELL_NUDGE_METERS = 0.01;
     }
 }
